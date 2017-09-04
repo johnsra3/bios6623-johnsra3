@@ -160,6 +160,8 @@ write.csv(tab, "DemographicsTable.csv")
 # Explore univ relationships b/t covs & attachment outcome
 #=================================================================#
 
+#Need to remember that plots based on difference don't account for 
+  #starting values, but still helpful to look at
 boxplot(gums$diffattach ~ labels$trtgroup, 
         main = "Yearly Difference in Attachment by Treatment Group") 
 #overall v little diff b/t groups
@@ -175,3 +177,24 @@ cor.test(gums$diffattach, labels$sites) #not significant, cor is ~ .162
 plot(gums$diffattach ~ labels$diffpd)
 cor.test(gums$diffattach, gums$diffpd) #outcomes are significantly correlated!
 
+plot(gums$diffattach ~ gums$attachbase)
+cor.test(gums$diffattach, gums$attachbase) #significant! change dep on baseline!
+
+#=================================================================#
+# Explore univ relationships b/t covs & pocket depth outcome
+#=================================================================#
+
+#Need to remember that plots based on difference don't acct for starting vals
+boxplot(gums$diffpd ~ labels$trtgroup,
+        main = "Yearly Difference in Pocket Depth by Treatment Group")
+#not super different by groups
+boxplot(gums$diffpd ~ labels$sex) #females look a bit lower
+boxplot(gums$diffpd ~ labels$race)
+plot(gums$diffpd ~ labels$age)
+cor.test(gums$diffpd, labels$age) #super not significant, cor is. ~ -0.074
+boxplot(gums$diffpd ~ labels$smoker)
+plot(gums$diffpd ~ labels$sites) 
+cor.test(gums$diffpd, labels$sites) #super not significant, cor is ~ -0.048
+
+plot(gums$diffpd ~ gums$pdbase)
+cor.test(gums$diffpd, gums$pdbase) #significant! change is dep on baseline
