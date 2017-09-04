@@ -122,7 +122,6 @@ tab[, 1] <- c("Sex (n (%))", levels(labels$sex), "Race (n (%))", levels(labels$r
               "Attachment at 1 year (mean (sd))", "Pocket depth at baseline (mean (sd))",
               "Pocket depth at 1 year (mean (sd))")
 
-#NEED TO GO BACK AND CHANGE MEAN STATEMENTS
 for(i in 1:5){
   tab[2, i+1] <- paste(nrow(gums[gums$trtgroup == i & gums$sex == 1, ]), "(",
                      round(nrow(gums[gums$trtgroup == i & gums$sex == 1, ])/nrow(gums[gums$trtgroup == i, ]), 2), ")")
@@ -142,24 +141,37 @@ for(i in 1:5){
                         round(nrow(gums[gums$trtgroup == i & gums$smoker == 0, ])/nrow(gums[gums$trtgroup == i, ]), 2), ")")
   tab[12, i+1] <- paste(nrow(gums[gums$trtgroup == i & gums$smoker == 1, ]), "(",
                         round(nrow(gums[gums$trtgroup == i & gums$smoker == 1, ])/nrow(gums[gums$trtgroup == i, ]), 2), ")")
-  tab[13, i+1] <- paste(round(mean(gums$sites, na.rm = T), 2), "(", 
-                       round(sd(gums$sites, na.rm = T), 2), ")")
-  tab[14, i+1] <- paste(round(mean(gums$attachbase, na.rm = T), 2), "(", 
-                        round(sd(gums$attachbase, na.rm = T), 2), ")")
-  tab[15, i+1] <- paste(round(mean(gums$attach1year, na.rm = T), 2), "(", 
-                        round(sd(gums$attach1year, na.rm = T), 2), ")")
-  tab[16, i+1] <- paste(round(mean(gums$pdbase, na.rm = T), 2), "(", 
-                        round(sd(gums$pdbase, na.rm = T), 2), ")")
-  tab[17, i+1] <- paste(round(mean(gums$pd1year, na.rm = T), 2), "(", 
-                        round(sd(gums$pd1year, na.rm = T), 2), ")")
+  tab[13, i+1] <- paste(round(mean(gums[gums$trtgroup == i, ]$sites, na.rm = T), 2), "(", 
+                       round(sd(gums[gums$trtgroup == i, ]$sites, na.rm = T), 2), ")")
+  tab[14, i+1] <- paste(round(mean(gums[gums$trtgroup == i, ]$attachbase, na.rm = T), 2), "(", 
+                        round(sd(gums[gums$trtgroup == i, ]$attachbase, na.rm = T), 2), ")")
+  tab[15, i+1] <- paste(round(mean(gums[gums$trtgroup == i, ]$attach1year, na.rm = T), 2), "(", 
+                        round(sd(gums[gums$trtgroup == i, ]$attach1year, na.rm = T), 2), ")")
+  tab[16, i+1] <- paste(round(mean(gums[gums$trtgroup == i, ]$pdbase, na.rm = T), 2), "(", 
+                        round(sd(gums[gums$trtgroup == i, ]$pdbase, na.rm = T), 2), ")")
+  tab[17, i+1] <- paste(round(mean(gums[gums$trtgroup == i, ]$pd1year, na.rm = T), 2), "(", 
+                        round(sd(gums[gums$trtgroup == i, ]$pd1year, na.rm = T), 2), ")")
 }
 
 setwd("C:/Repositories/bios6623-johnsra3/Project0/Processed")
 write.csv(tab, "DemographicsTable.csv")
 
 #=================================================================#
-# Explore univ relationships b/t covs & outcome 1: attach 1 year
+# Explore univ relationships b/t covs & attachment outcome
 #=================================================================#
 
+boxplot(gums$diffattach ~ labels$trtgroup, 
+        main = "Yearly Difference in Attachment by Treatment Group") 
+#overall v little diff b/t groups
+boxplot(gums$diffattach ~ labels$sex) #much greater range for females
+boxplot(gums$diffattach ~ labels$race) #Afr Amer slightly lower, large white range
+plot(gums$diffattach ~ labels$age) #no strong pattern
+cor.test(gums$diffattach, labels$age) #not significant, cor is ~ -0.175
+boxplot(gums$diffattach ~ labels$smoker) #v little difference
+plot(gums$diffattach ~ labels$sites)
+cor.test(gums$diffattach, labels$sites) #not significant, cor is ~ .162
 
+#Looking at relationship b/t 2 outcomes
+plot(gums$diffattach ~ labels$diffpd)
+cor.test(gums$diffattach, gums$diffpd) #outcomes are significantly correlated!
 
