@@ -198,3 +198,11 @@ cor.test(gums$diffpd, labels$sites) #super not significant, cor is ~ -0.048
 
 plot(gums$diffpd ~ gums$pdbase)
 cor.test(gums$diffpd, gums$pdbase) #significant! change is dep on baseline
+
+#correlation test between two outcomes
+cor.test(gums$diffattach, gums$diffpd)
+plot(gums$diffattach, gums$diffpd, xlab = "Difference in Attachment",
+     ylab = "Difference in Pocket Depth", main = "Difference in Two Outcomes", 
+     pch = 19)
+text(x = -0.95, y = 0.4, "Correlation = \n 0.5355")
+text(x = -0.95, y = 0.2, "p-value\n< 0.001")
