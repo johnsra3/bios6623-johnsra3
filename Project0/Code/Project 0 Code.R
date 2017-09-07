@@ -246,6 +246,7 @@ model1res$CIfull <- paste("(", model1res$CIlow, ",", model1res$CIhigh, ")")
 
 model1tab <- model1res[, c(1, 7, 3)]
 colnames(model1tab) <- c("Estimate", "95% Confidence Interval", "p-value")
+model1tab[6, 3] <- "<0.001" #because was rounding to 0
 
 setwd("C:/Repositories/bios6623-johnsra3/Project0/Processed")
 write.csv(model1tab, "Model1_Attachment_AnalysisTable.csv")

@@ -1,0 +1,7 @@
+"","Estimate","95% Confidence Interval","p-value"
+"Intercept (Control)",0.033,"( -0.343 , 0.409 )",0.862
+"Placebo",-0.033,"( -0.184 , 0.118 )",0.67
+"Low Dose",0.125,"( -0.028 , 0.278 )",0.113
+"Medium Dose",0.108,"( -0.049 , 0.265 )",0.179
+"High Dose",-0.056,"( -0.221 , 0.109 )",0.506
+"Baseline Attachment",-0.113,"( -0.223 , -0.003 )",0.046
