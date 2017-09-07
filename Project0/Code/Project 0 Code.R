@@ -206,3 +206,63 @@ plot(gums$diffattach, gums$diffpd, xlab = "Difference in Attachment",
      pch = 19)
 text(x = -0.95, y = 0.4, "Correlation = \n 0.5355")
 text(x = -0.95, y = 0.2, "p-value\n< 0.001")
+
+
+#=================================================================#
+# Analyze data
+#=================================================================#
+
+#Model 1
+model1_data <- gums[, c("id", "trtgroup", "attachbase", "attach1year", "diffattach")]
+
+model1_data$trtgroup <- factor(model1_data$trtgroup, levels = c("2", "1", "3", "4", "5"))
+
+model1 <- lm(diffattach ~ trtgroup + attachbase, data = model1_data)
+summary(model1)
+
+#Model 2
+model2_data <- gums[, c("id", "trtgroup", "pdbase", "pd1year", "diffpd")]
+
+model2_data$trtgroup <- factor(model2_data$trtgroup, levels = c("2", "1", "3", "4", "5"))
+
+model2 <- lm(diffpd ~ trtgroup + pdbase, data = model2_data)
+summary(model2)
+
+
+#=================================================================#
+# Create analysis tables
+#=================================================================#
+
+#Model 1
+model1res <- summary(model1)$coef[, -3]
+model1res <- round(model1res, 3)
+rownames(model1res) <- c("Intercept (Control)", "Placebo", "Low Dose",
+                         "Medium Dose", "High Dose", "Baseline Attachment")
+model1res <- as.data.frame(model1res)
+model1res$CI <- round(model1res$`Std. Error` * 1.96, 3)
+model1res$CIlow <- model1res$Estimate - model1res$CI
+model1res$CIhigh <- model1res$Estimate + model1res$CI  
+model1res$CIfull <- paste("(", model1res$CIlow, ",", model1res$CIhigh, ")")  
+
+model1tab <- model1res[, c(1, 7, 3)]
+colnames(model1tab) <- c("Estimate", "95% Confidence Interval", "p-value")
+
+setwd("C:/Repositories/bios6623-johnsra3/Project0/Processed")
+write.csv(model1tab, "Model1_Attachment_AnalysisTable.csv")
+
+#Model 2 
+model2res <- summary(model2)$coef[, -3]
+model2res <- round(model2res, 3)
+rownames(model2res) <- c("Intercept (Control)", "Placebo", "Low Dose",
+                         "Medium Dose", "High Dose", "Baseline Attachment")
+model2res <- as.data.frame(model2res)
+model2res$CI <- round(model2res$`Std. Error` * 1.96, 3)
+model2res$CIlow <- model2res$Estimate - model2res$CI
+model2res$CIhigh <- model2res$Estimate + model2res$CI
+model2res$CIfull <- paste("(", model2res$CIlow, ",", model2res$CIhigh, ")")
+
+model2tab <- model2res[, c(1, 7, 3)]
+colnames(model2tab) <- c("Estimate", "95% Confidence Interval", "p-value")
+
+setwd("C:/Repositories/bios6623-johnsra3/Project0/Processed")
+write.csv(model2tab, "Model2_PocketDepth_AnalysisTable.csv")
