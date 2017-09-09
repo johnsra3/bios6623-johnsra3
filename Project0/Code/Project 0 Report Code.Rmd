@@ -1,60 +1,21 @@
-#=================================================================#
-# Project 0
-# Purpose: Analyze data to determine if dental gel improves gum health measurements
-# Rachel Johnson
-# Code started: 08/30/2017
-# Last updated: 08/30/2017
-#=================================================================#
+---
+title: "Project 0 Report"
+author: "Rachel Johnson"
+date: "September 13, 2017"
+output: word_document
+---
 
-#=================================================================#
-# Import and clean data
-#=================================================================#
+
+```{r setup, include=FALSE}
+#All background needed for code to run in later chunks
+
+library(knitr)
 
 setwd("~/School/AdvancedData")
 gums <- read.csv("Project0_dental_data.csv", header = T)
-
-#=================================================================#
-# Explore all variables indiv. (even though randomized trial)
-#=================================================================#
-
-names(gums)
-
-table(gums$id) #no repeat IDs
-table(gums$trtgroup) #evenly spread; 26 in each group
-table(gums$trtgroup) #not an even number of men and women
-table(gums$sex, gums$trtgroup) #however there are approx. equal in each group
-table(gums$race) #definitely uneven numbers
-
-table(gums$age)
 gums$age <- as.numeric(gums$age)
-summary(gums$age)
-
-table(gums$smoker, gums$trtgroup)
-summary(gums$sites)
-
-summary(gums$attachbase)
-boxplot(gums$attachbase)
-
-summary(gums$attach1year)
-boxplot(gums$attach1year)
-
 gums$diffattach <- gums$attach1year - gums$attachbase
-summary(gums$diffattach)
-boxplot(gums$diffattach)
-
-summary(gums$pdbase)
-boxplot(gums$pdbase)
-
-summary(gums$pd1year)
-boxplot(gums$pd1year)
-
 gums$diffpd <- gums$pd1year - gums$pdbase
-summary(gums$diffpd)
-boxplot(gums$diffpd)
-
-#=================================================================#
-# Label variables from data dictionary
-#=================================================================#
 
 labels <- gums
 
@@ -77,42 +38,15 @@ labels$race <- factor(labels$race, levels = c("1", "2", "4", "5"),
 table(labels$smoker)
 labels$smoker <- factor(labels$smoker, levels = c("0", "1"), labels = c("No", "Yes"))
 
-
-#=================================================================#
-# Investigate missing data for outcome
-#=================================================================#
-
-missing <- gums[is.na(gums$pd1year) == TRUE, ]
-table(missing$sex)
-table(missing$race)
-summary(missing$age)
-table(missing$smoker)
-#None of these contain unusual patterns that would explain missingness
-
-#Since they're missing the outcomes, they will be excluded from the analysis
-  #therefore, will exclude them from dataset now
 labels <- labels[is.na(labels$pd1year) == FALSE, ]
 gums <- gums[is.na(gums$pd1year) == FALSE, ]
 
-#=================================================================#
-# Divide into group data sets to make table
-#=================================================================#
-
-levels(labels$trtgroup)
 group1 <- labels[labels$trtgroup == "Placebo", ]
 group2 <- labels[labels$trtgroup == "Control", ]  
 group3 <- labels[labels$trtgroup == "Low Dose", ]
 group4 <- labels[labels$trtgroup == "Medium Dose", ]  
 group5 <- labels[labels$trtgroup == "High Dose", ] 
-#Slightly more are missing from group 5, but not an incredible amt more 
 
-
-#=================================================================#
-# Divide into group data sets to make table
-#=================================================================#
-
-#Want to include sex (3 row), race (5 row), age (1), smoker (3), sites (1), 
-  #attach base (1), attach 1yr (1), pdbase (1), pd1 yr (1)
 num <- 3 + 5 + 1 + 3 + 1 + 1 + 1 + 1 + 1
 tab <- matrix(data = NA, ncol = 6, nrow = 17)
 colnames(tab) <- c("", levels(labels$trtgroup))
@@ -153,65 +87,6 @@ for(i in 1:5){
                         round(sd(gums[gums$trtgroup == i, ]$pd1year, na.rm = T), 2), ")")
 }
 
-setwd("C:/Repositories/bios6623-johnsra3/Project0/Processed")
-write.csv(tab, "DemographicsTable.csv")
-
-#=================================================================#
-# Explore univ relationships b/t covs & attachment outcome
-#=================================================================#
-
-#Need to remember that plots based on difference don't account for 
-  #starting values, but still helpful to look at
-boxplot(gums$diffattach ~ labels$trtgroup, 
-        main = "Yearly Difference in Attachment by Treatment Group") 
-#overall v little diff b/t groups
-boxplot(gums$diffattach ~ labels$sex) #much greater range for females
-boxplot(gums$diffattach ~ labels$race) #Afr Amer slightly lower, large white range
-plot(gums$diffattach ~ labels$age) #no strong pattern
-cor.test(gums$diffattach, labels$age) #not significant, cor is ~ -0.175
-boxplot(gums$diffattach ~ labels$smoker) #v little difference
-plot(gums$diffattach ~ labels$sites)
-cor.test(gums$diffattach, labels$sites) #not significant, cor is ~ .162
-
-#Looking at relationship b/t 2 outcomes
-plot(gums$diffattach ~ labels$diffpd)
-cor.test(gums$diffattach, gums$diffpd) #outcomes are significantly correlated!
-
-plot(gums$diffattach ~ gums$attachbase)
-cor.test(gums$diffattach, gums$attachbase) #significant! change dep on baseline!
-
-#=================================================================#
-# Explore univ relationships b/t covs & pocket depth outcome
-#=================================================================#
-
-#Need to remember that plots based on difference don't acct for starting vals
-boxplot(gums$diffpd ~ labels$trtgroup,
-        main = "Yearly Difference in Pocket Depth by Treatment Group")
-#not super different by groups
-boxplot(gums$diffpd ~ labels$sex) #females look a bit lower
-boxplot(gums$diffpd ~ labels$race)
-plot(gums$diffpd ~ labels$age)
-cor.test(gums$diffpd, labels$age) #super not significant, cor is. ~ -0.074
-boxplot(gums$diffpd ~ labels$smoker)
-plot(gums$diffpd ~ labels$sites) 
-cor.test(gums$diffpd, labels$sites) #super not significant, cor is ~ -0.048
-
-plot(gums$diffpd ~ gums$pdbase)
-cor.test(gums$diffpd, gums$pdbase) #significant! change is dep on baseline
-
-#correlation test between two outcomes
-cor.test(gums$diffattach, gums$diffpd)
-plot(gums$diffattach, gums$diffpd, xlab = "Difference in Attachment",
-     ylab = "Difference in Pocket Depth", main = "Difference in Two Outcomes", 
-     pch = 19)
-text(x = -0.95, y = 0.4, "Correlation = \n 0.5355")
-text(x = -0.95, y = 0.2, "p-value\n< 0.001")
-
-
-#=================================================================#
-# Analyze data
-#=================================================================#
-
 #Model 1
 model1_data <- gums[, c("id", "trtgroup", "attachbase", "attach1year", "diffattach")]
 
@@ -229,10 +104,55 @@ model2 <- lm(diffpd ~ trtgroup + pdbase, data = model2_data)
 summary(model2)
 
 
-#=================================================================#
-# Create analysis tables
-#=================================================================#
+```
+<br>
+# **Introduction**
+<br>
+The goal of this project is to determine whether a new gel aimed at treating gum disease improves dental measurements after 1 year of use. Subjects were randomized to one of 5 groups, which included both a control group and placebo gel treatment group. The other three groups had differing levels of the active ingredient in the gel treatment: low, medium, or high. 26 subjects were originally randomized to these groups, resulting in a total of 130 subjects measured at baseline. 
+<br>
+At baseline and at the 1 year follow-up visit, each subject's gum attachment and gum pocket depth were measured at a number of sites, and these measurements were averaged to create an average attachment and average pocket depth score for each subject at each time point. The primary research question was whether the treatment results in lower average pocket depths and attachments after one year. 
+<br>
+<br>
+# **Methods**
+<br>
+Originally, there were 130 subjects included in the subject who were randomized to 5 treatment groups. Since 27 subjects were missing pocket depth and attachment measurements at 1 year, they were excluded from the analysis, including the descriptive analyses. 
+<br>
+Variables were created to quantify the differences in pocket depth and attachment measurements between the baseline and 1 year follow-up time points, and these were used as the primary outcomes for the analyses. 
+<br>
+For each of the two clinical outcomes, the difference between the baseline and 1 year follow-up measurements were modeled in multiple linear regressions as a function of the baseline values for the respective measurement and the treatment group to best answer the primary research question. Additional covariates were not included in the models, since the trial was randomized, but the summaries of these demographic variables are included in Table 1. 
+<br>
+All analyses were performed in R version 3.4.0. 
+<br>
+<br>
+# **Results**
+<br>
+The demographics of the `r nrow(gums)` patients are shown in Table 1, including their measurements for both outcomes at the baseline and 1 year time points. 
+<br>
+*Table 1.* This table describes the demographics of the 103 individuals who remained in the study for the entire year; the 27 individuals with missing outcomes were excluded as they were excluded from the analysis. 
+<br>
+```{r, echo = FALSE}
 
+kable(tab)
+
+```
+<br>
+*Outcome 1: Gum attachment*
+<br>
+First, the yearly difference in gum attachment--the baseline attachment subtracted from the attachment at 1 year--was compared among the five treatment groups.
+<br>
+*Figure 1.* This graph displays the yearly difference in attachment among the control, placebo, and three levels of treatment groups.
+<br>
+```{r, echo = FALSE}
+boxplot(gums$diffattach ~ labels$trtgroup, 
+        main = "Yearly Difference in Attachment by Treatment Group") 
+
+```
+<br>
+The results of the multiple linear regression for this outcome are shown below in Table 2. 
+<br>
+*Table 2.* This table displays the beta estimates, 95% confidence intervals, and p-values for the treatment groups and baseline attachment measurement covariates in this multiple linear regression model. 
+<br>
+```{r, echo = FALSE}
 #Model 1
 model1res <- summary(model1)$coef[, -3]
 model1res <- round(model1res, 3)
@@ -248,14 +168,35 @@ model1tab <- model1res[, c(1, 7, 3)]
 colnames(model1tab) <- c("Estimate", "95% Confidence Interval", "p-value")
 model1tab[6, 3] <- "<0.001" #because was rounding to 0
 
-setwd("C:/Repositories/bios6623-johnsra3/Project0/Processed")
-write.csv(model1tab, "Model1_Attachment_AnalysisTable.csv")
+kable(model1tab)
+```
+<br>
+There were only two significant predictors of the difference in gum attachment: medium concentration of the active ingredient compared to the control group (p = 0.023) and baseline attachment (p < 0.001). However, the medium concentration in the gel did not reduce gum attachment measurements; compared to the control group, those in the medium concentration group had differences in gum attachment that were 0.176 points higher, when controlling for baseline values. 
+<br>
+Therefore, although there was an overall decrease in whole-mouth average gum attachment of `r mean(gums$diffattach)`, this difference was only significantly explained by baseline gum attachment values. For every one point increase in baseline gum attachment, there was a decrease of 0.129 points in the yearly difference in gum attachment.  
+<br>
+<br>
+*Outcome 2: Gum pocket depth*
+<br>
+Second, the yearly difference in pocket depth--the baseline pocket depth subtracted from the pocket depth at 1 year--was compared among the five treatment groups.
+<br>
+*Figure 2.* This graph displays the yearly difference in pocket depth among the control, placebo, and three levels of treatment groups.
+<br>
+```{r, echo = FALSE}
+boxplot(gums$diffpd ~ labels$trtgroup,
+        main = "Yearly Difference in Pocket Depth by Treatment Group")
 
-#Model 2 
+```
+<br>
+The results of the multiple linear regression for this outcome are shown below in Table 3. 
+<br>
+*Table 3.* This table displays the beta estimates, 95% confidence intervals, and p-values for the treatment groups and baseline pocket depth covariates in this multiple linear regression model. 
+<br>
+```{r, echo = FALSE}
 model2res <- summary(model2)$coef[, -3]
 model2res <- round(model2res, 3)
 rownames(model2res) <- c("Intercept (Control)", "Placebo", "Low Dose",
-                         "Medium Dose", "High Dose", "Baseline Attachment")
+                         "Medium Dose", "High Dose", "Baseline Pocket Depth")
 model2res <- as.data.frame(model2res)
 model2res$CI <- round(model2res$`Std. Error` * 1.96, 3)
 model2res$CIlow <- model2res$Estimate - model2res$CI
@@ -265,5 +206,17 @@ model2res$CIfull <- paste("(", paste(model2res$CIlow, ",", model2res$CIhigh, sep
 model2tab <- model2res[, c(1, 7, 3)]
 colnames(model2tab) <- c("Estimate", "95% Confidence Interval", "p-value")
 
-setwd("C:/Repositories/bios6623-johnsra3/Project0/Processed")
-write.csv(model2tab, "Model2_PocketDepth_AnalysisTable.csv")
+kable(model2tab)
+```
+<br>
+There was an overall decrease in pocket depth of `r mean(gums$diffpd)`, which was only significantly explained by baseline pocket depth (p = 0.046). For every 1 point increase in baseline pocket depth, there was a -0.113 decrease in yearly difference in pocket depth. 
+<br>
+<br>
+*Conclusions*
+<br>
+Based on the results of the two models, treatment does not have a signifcant effect on producing lower average pocket depth and attachment loss at one year. 
+<br>
+This study is potentially limited by the 27 individuals who had missing outcomes. Based on a brief analysis of these 27 individuals, there were no patterns to clearly explain their missingness. However, the greatest number of individuals were missing from the high concentration of active ingredient group, so it is more difficult to fully analyze the effect of 
+
+
+
