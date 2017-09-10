@@ -106,14 +106,14 @@ summary(model2)
 
 ```
 <br>
-# **Introduction**
+# Introduction
 <br>
 The goal of this project is to determine whether a new gel aimed at treating gum disease improves dental measurements after 1 year of use. Subjects were randomized to one of 5 groups, which included both a control group and placebo gel treatment group. The other three groups had differing levels of the active ingredient in the gel treatment: low, medium, or high. 26 subjects were originally randomized to these groups, resulting in a total of 130 subjects measured at baseline. 
 <br>
 At baseline and at the 1 year follow-up visit, each subject's gum attachment and gum pocket depth were measured at a number of sites, and these measurements were averaged to create an average attachment and average pocket depth score for each subject at each time point. The primary research question was whether the treatment results in lower average pocket depths and attachments after one year. 
 <br>
 <br>
-# **Methods**
+# Methods
 <br>
 Originally, there were 130 subjects included in the subject who were randomized to 5 treatment groups. Since 27 subjects were missing pocket depth and attachment measurements at 1 year, they were excluded from the analysis, including the descriptive analyses. 
 <br>
@@ -124,7 +124,7 @@ For each of the two clinical outcomes, the difference between the baseline and 1
 All analyses were performed in R version 3.4.0. 
 <br>
 <br>
-# **Results**
+# Results
 <br>
 The demographics of the `r nrow(gums)` patients are shown in Table 1, including their measurements for both outcomes at the baseline and 1 year time points. 
 <br>
@@ -212,11 +212,11 @@ kable(model2tab)
 There was an overall decrease in pocket depth of `r mean(gums$diffpd)`, which was only significantly explained by baseline pocket depth (p = 0.046). For every 1 point increase in baseline pocket depth, there was a -0.113 decrease in yearly difference in pocket depth. 
 <br>
 <br>
-*Conclusions*
+# Conclusions
 <br>
 Based on the results of the two models, treatment does not have a signifcant effect on producing lower average pocket depth and attachment loss at one year. 
 <br>
-This study is potentially limited by the 27 individuals who had missing outcomes. Based on a brief analysis of these 27 individuals, there were no patterns to clearly explain their missingness. However, the greatest number of individuals were missing from the high concentration of active ingredient group, so it is more difficult to fully analyze the effect of 
+This study is potentially limited by the 27 individuals who had missing outcomes. Based on a brief analysis of these 27 individuals, there were no patterns to clearly explain their missingness. However, the greatest number of individuals were missing from the high concentration of active ingredient group, so there is less information available to be able to fully analyze the effect of the high concentrations of the active ingredient in the gel. 
 
 
 
