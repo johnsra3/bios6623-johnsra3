@@ -135,8 +135,8 @@ for(i in 1:5){
                        round(nrow(gums[gums$trtgroup == i & gums$race == 4, ])/nrow(gums[gums$trtgroup == i, ]), 2), ")")
   tab[8, i+1] <- paste(nrow(gums[gums$trtgroup == i & gums$race == 5, ]), "(",
                        round(nrow(gums[gums$trtgroup == i & gums$race == 5, ])/nrow(gums[gums$trtgroup == i, ]), 2), ")")
-  tab[9, i+1] <- paste(round(mean(gums$age, na.rm = T), 2), "(", 
-                        round(sd(gums$age, na.rm = T), 2), ")")
+  tab[9, i+1] <- paste(round(mean(gums[gums$trtgroup == i, ]$age, na.rm = T), 2), "(", 
+                        round(sd(gums[gums$trtgroup == i, ]$age, na.rm = T), 2), ")")
   tab[11, i+1] <- paste(nrow(gums[gums$trtgroup == i & gums$smoker == 0, ]), "(",
                         round(nrow(gums[gums$trtgroup == i & gums$smoker == 0, ])/nrow(gums[gums$trtgroup == i, ]), 2), ")")
   tab[12, i+1] <- paste(nrow(gums[gums$trtgroup == i & gums$smoker == 1, ]), "(",
@@ -267,3 +267,18 @@ colnames(model2tab) <- c("Estimate", "95% Confidence Interval", "p-value")
 
 setwd("C:/Repositories/bios6623-johnsra3/Project0/Processed")
 write.csv(model2tab, "Model2_PocketDepth_AnalysisTable.csv")
+
+
+#=================================================================#
+# Model diagnostics
+#=================================================================#
+
+#Model 1
+par(mfrow = c(2, 2))
+plot(model1, which = 1:4)
+#no v strong issues w/ residuals vs. fitted or q-q plot; model fit is acceptable
+
+#Model 2
+par(mfrow = c(2, 2))
+plot(model2, which = 1:4)
+#no v strong issues w/ residuals vs. fitted or q-q plot; model fit is acceptable
