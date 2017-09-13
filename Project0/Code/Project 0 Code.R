@@ -83,16 +83,29 @@ labels$smoker <- factor(labels$smoker, levels = c("0", "1"), labels = c("No", "Y
 #=================================================================#
 
 missing <- gums[is.na(gums$pd1year) == TRUE, ]
-table(missing$sex)
-table(missing$race)
-summary(missing$age)
-table(missing$smoker)
-#None of these contain unusual patterns that would explain missingness
 
 #Since they're missing the outcomes, they will be excluded from the analysis
-  #therefore, will exclude them from dataset now
+#therefore, will exclude them from dataset now
 labels <- labels[is.na(labels$pd1year) == FALSE, ]
 gums <- gums[is.na(gums$pd1year) == FALSE, ]
+
+missing$incl <- "No"
+gums$incl <- "Yes"
+tests <- rbind.data.frame(missing, gums)
+
+table(tests$sex, tests$incl)
+chisq.test(tests$sex, tests$incl) #p = 0.005827
+
+table(missing$race)
+chisq.test(tests$race, tests$incl) #p = 0.633
+
+summary(missing$age)
+t.test(tests$age ~ tests$incl, var.equal = FALSE) #p = 0.6563
+
+table(missing$smoker)
+chisq.test(tests$smoker, tests$incl) #p =0.5152
+
+#Only significant expl. of missingness is sex
 
 #=================================================================#
 # Divide into group data sets to make table
