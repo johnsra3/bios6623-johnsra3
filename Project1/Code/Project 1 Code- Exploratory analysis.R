@@ -269,8 +269,11 @@ demtab[23, 2] <- paste(round(mean(leu3n$LEU3N), 2), "±", round(sd(leu3n$LEU3N), 
 demtab[24, 1] <- "Baseline AGG_MENT score"
 demtab[24, 2] <- paste(round(mean(aggment$AGG_MENT), 2), "±", round(sd(aggment$AGG_MENT), 2))
 
-demtab[25, 1] <- "Baselin AGG_PHYS score"
+demtab[25, 1] <- "Baseline AGG_PHYS score"
 demtab[25, 2] <- paste(round(mean(aggphys$AGG_PHYS), 2), "±", round(sd(aggphys$AGG_PHYS), 2))
+
+setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
+write.csv(demtab, "DemographicsTable09242017.csv")
 
 
 #=============================================================#
@@ -294,3 +297,6 @@ outtab[3, 2] <- paste(round(mean(hiv$diff_aggment, na.rm = T), 2), "±",
 outtab[4, 1] <- "Difference in AGG_PHYS score"
 outtab[4, 2] <- paste(round(mean(hiv$diff_aggphys, na.rm = T), 2), "±", 
                       round(sd(hiv$diff_aggphys, na.rm = T), 2))
+
+setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
+write.csv(outtab, "DifferenceOutcomesTable09242017.csv")
