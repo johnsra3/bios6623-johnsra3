@@ -207,13 +207,12 @@ summary(hiv$age)
   #drink_cat (3), smoke_cat (3), income_cat (4), educ_cat (3),
   #ADH (3), baseline vload (1), baseline leu3n (1),
   #baseline aggment (1), baseline aggphys (1)
-num <- 1 + 1 + 3 + 3 + 3 + 3 + 4 + 3 + 3 + 1 + 1 + 1 + 1
-demtab <- matrix(data = NA, nrow = num, ncol = 2)
+demtab <- matrix(data = NA, nrow = 25, ncol = 2)
 
-demtab[1, 1] <- "Age"
+demtab[1, 1] <- "Age at baseline"
 demtab[1, 2] <- paste(round(mean(hiv$age), 2), "±", round(sd(hiv$age), 2))
 
-demtab[2, 1] <- "BMI"
+demtab[2, 1] <- "BMI at baseline"
 demtab[2, 2] <- paste(round(mean(hiv$BMI, na.rm = T), 2), "±", round(sd(hiv$BMI, na.rm = T), 2))
 
 demtab[3, 1] <- "Hard drug use at baseline"
@@ -235,20 +234,63 @@ demtab[10, 2] <- paste(nrow(hiv[hiv$smoke_cat == "Never/former", ]),
 demtab[11, 2] <- paste(nrow(hiv[hiv$smoke_cat == "Current", ]), 
                       paste("(", round(nrow(hiv[hiv$smoke_cat == "Current", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
 
-demtab[12, 1] <- "Income level"
+demtab[12, 1] <- "Income level at baseline"
 demtab[13:15, 1] <- levels(hiv$income_cat)
-demtab[13, 2] <- paste(nrow(hiv[hiv$income_cat == "< $10,000", ]), 
-                       paste("(", round(nrow(hiv[hiv$income_cat == "< $10,000", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[14, 2] <- paste(nrow(hiv[hiv$income_cat == "$10,000 - $40,000", ]), 
-                       paste("(", round(nrow(hiv[hiv$income_cat == "$10,000 - $40,000", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[15, 2] <- paste(nrow(hiv[hiv$income_cat == "> $40,000", ]), 
-                       paste("(", round(nrow(hiv[hiv$income_cat == "> $40,000", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
-#income is wrong- need to deal w/ NAs
+inc <- cbind.data.frame(hiv$income_cat, hiv$newid)
+inc <- inc[is.na(inc$`hiv$income_cat`) == FALSE, ]
+colnames(inc) <- c("income_cat", "newid")
+demtab[13, 2] <- paste(nrow(inc[inc$income_cat == "< $10,000", ]), 
+                       paste("(", round(nrow(inc[inc$income_cat == "< $10,000", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
+demtab[14, 2] <- paste(nrow(inc[inc$income_cat == "$10,000 - $40,000", ]), 
+                       paste("(", round(nrow(inc[inc$income_cat == "$10,000 - $40,000", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
+demtab[15, 2] <- paste(nrow(inc[inc$income_cat == "> $40,000", ]), 
+                       paste("(", round(nrow(inc[inc$income_cat == "> $40,000", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
 
-#income_cat (4), educ_cat (3),
-#ADH (3), baseline vload (1), baseline leu3n (1),
-#baseline aggment (1), baseline aggphys (1)
+demtab[16, 1] <- "Education at baseline"
+demtab[17:18, 1] <- levels(hiv$educ_cat)
+demtab[17, 2] <- paste(nrow(hiv[hiv$educ_cat == "HS or less", ]), 
+                       paste("(", round(nrow(hiv[hiv$educ_cat == "HS or less", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
+demtab[18, 2] <- paste(nrow(hiv[hiv$educ_cat == ">HS", ]), 
+                       paste("(", round(nrow(hiv[hiv$educ_cat == ">HS", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
+
+demtab[19, 1] <- "Adherence at 2 years"
+demtab[20:21, 1] <- levels(hiv$adh_cat_2yr)
+demtab[20, 2] <- paste(nrow(hiv[hiv$adh_cat_2yr == "<95%", ]), 
+                       paste("(", round(nrow(hiv[hiv$adh_cat_2yr == "<95%", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
+demtab[21, 2] <-paste(nrow(hiv[hiv$adh_cat_2yr == ">95%", ]), 
+                      paste("(", round(nrow(hiv[hiv$adh_cat_2yr == ">95%", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
+
+demtab[22, 1] <- "Baseline viral load"
+demtab[22, 2] <- paste(round(mean(vload$VLOAD), 2), "±", round(sd(vload$VLOAD), 2))
+  
+demtab[23, 1] <- "Baseline CD4+ count"
+demtab[23, 2] <- paste(round(mean(leu3n$LEU3N), 2), "±", round(sd(leu3n$LEU3N), 2))
+
+demtab[24, 1] <- "Baseline AGG_MENT score"
+demtab[24, 2] <- paste(round(mean(aggment$AGG_MENT), 2), "±", round(sd(aggment$AGG_MENT), 2))
+
+demtab[25, 1] <- "Baselin AGG_PHYS score"
+demtab[25, 2] <- paste(round(mean(aggphys$AGG_PHYS), 2), "±", round(sd(aggphys$AGG_PHYS), 2))
+
 
 #=============================================================#
 # Create table 2: outcomes
 #=============================================================#
+
+outtab <- matrix(data = NA, nrow = 4, ncol = 2)
+
+outtab[1, 1] <- "Difference in VLOAD"
+outtab[1, 2] <- paste(round(mean(hiv$diff_vload, na.rm = T), 2), 
+                      "±", round(sd(hiv$diff_vload, na.rm = T), 2))
+
+outtab[2, 1] <- "Difference in CD4+ count"
+outtab[2, 2] <- paste(round(mean(hiv$diff_leu3n, na.rm = T), 2), 
+                      "±", round(sd(hiv$diff_leu3n, na.rm = T), 2))
+
+outtab[3, 1] <- "Difference in AGG_MENT score"
+outtab[3, 2] <- paste(round(mean(hiv$diff_aggment, na.rm = T), 2), "±", 
+                      round(sd(hiv$diff_aggment, na.rm = T), 2))
+
+outtab[4, 1] <- "Difference in AGG_PHYS score"
+outtab[4, 2] <- paste(round(mean(hiv$diff_aggphys, na.rm = T), 2), "±", 
+                      round(sd(hiv$diff_aggphys, na.rm = T), 2))
