@@ -362,31 +362,63 @@ demtab[22, 4] <- paste(round(mean(aggphysno$AGG_PHYS), 2), "±", round(sd(aggphys
 demtab[22, 5] <- round(t.test(aggphys$AGG_PHYS ~ aggment$hard_drugs, var.equal = F)$p.value, 3)
 
 
-setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
-write.csv(demtab, "DemographicsTable09242017.csv")
+#setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
+#write.csv(demtab, "DemographicsTable09242017.csv")
 
 
 #=============================================================#
 # Create table 2: outcomes
 #=============================================================#
 
-outtab <- matrix(data = NA, nrow = 4, ncol = 2)
+outtab <- matrix(data = NA, nrow = 4, ncol = 4)
+colnames(outtab) <- c("", "Total", "Hard drugs = Yes", "Hard drugs = No")
 
 outtab[1, 1] <- "Difference in VLOAD"
 outtab[1, 2] <- paste(round(mean(hiv$diff_vload, na.rm = T), 2), 
                       "±", round(sd(hiv$diff_vload, na.rm = T), 2))
+outtab[1, 3] <- paste(round(mean(hivyes$diff_vload, na.rm = T), 2), 
+                      "±", round(sd(hivyes$diff_vload, na.rm = T), 2))
+outtab[1, 4] <- paste(round(mean(hivno$diff_vload, na.rm = T), 2), 
+                      "±", round(sd(hivno$diff_vload, na.rm = T), 2))
 
 outtab[2, 1] <- "Difference in CD4+ count"
 outtab[2, 2] <- paste(round(mean(hiv$diff_leu3n, na.rm = T), 2), 
                       "±", round(sd(hiv$diff_leu3n, na.rm = T), 2))
+outtab[2, 3] <- paste(round(mean(hivyes$diff_leu3n, na.rm = T), 2), 
+                      "±", round(sd(hivyes$diff_leu3n, na.rm = T), 2))
+outtab[2, 4] <- paste(round(mean(hivno$diff_leu3n, na.rm = T), 2), 
+                      "±", round(sd(hivno$diff_leu3n, na.rm = T), 2))
 
 outtab[3, 1] <- "Difference in AGG_MENT score"
 outtab[3, 2] <- paste(round(mean(hiv$diff_aggment, na.rm = T), 2), "±", 
+                      round(sd(hiv$diff_aggment, na.rm = T), 2))
+outtab[3, 3] <- paste(round(mean(hiv$diff_aggment, na.rm = T), 2), "±", 
+                      round(sd(hiv$diff_aggment, na.rm = T), 2))
+outtab[3, 4] <- paste(round(mean(hiv$diff_aggment, na.rm = T), 2), "±", 
                       round(sd(hiv$diff_aggment, na.rm = T), 2))
 
 outtab[4, 1] <- "Difference in AGG_PHYS score"
 outtab[4, 2] <- paste(round(mean(hiv$diff_aggphys, na.rm = T), 2), "±", 
                       round(sd(hiv$diff_aggphys, na.rm = T), 2))
+outtab[4, 3] <- paste(round(mean(hiv$diff_aggphys, na.rm = T), 2), "±", 
+                      round(sd(hiv$diff_aggphys, na.rm = T), 2))
+outtab[4, 4] <- paste(round(mean(hiv$diff_aggphys, na.rm = T), 2), "±", 
+                      round(sd(hiv$diff_aggphys, na.rm = T), 2))
 
 setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
 write.csv(outtab, "DifferenceOutcomesTable09242017.csv")
+
+
+#=============================================================#
+# Create graphs for outcome differences
+#=============================================================#
+
+par(mfrow = c(2, 2))
+boxplot(hiv$diff_vload ~ hiv$hard_drugs, ylab = "Difference in Viral Load",
+        main = "Difference in Viral Load \nby Hard Drug Use")
+boxplot(hiv$diff_leu3n ~ hiv$hard_drugs, ylab = "Difference in CD4+ Count",
+        main = "Difference in CD4+ Count \nby Hard Drug Use")
+boxplot(hiv$diff_aggment ~ hiv$hard_drugs, ylab = "Difference in SF36 MCS Score",
+        main = "Difference in SF36 MCS Score \nby Hard Drug Use")
+boxplot(hiv$diff_aggphys ~ hiv$hard_drugs, ylab = "Difference in SF36 PCS Score",
+        main = "Difference in SF36 PCS Score \nby Hard Drug Use")
