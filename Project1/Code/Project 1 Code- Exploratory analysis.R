@@ -281,8 +281,8 @@ demtab[10:12, 1] <- levels(hiv$income_cat)
 inc <- cbind.data.frame(hiv$income_cat, hiv$newid, hiv$hard_drugs)
 inc <- inc[is.na(inc$`hiv$income_cat`) == FALSE, ]
 colnames(inc) <- c("income_cat", "newid", "hard_drugs")
-incyes <- inc[inc$`hiv$hard_drugs` == "Yes", ]
-incno <- inc[inc$`hiv$hard_drugs` == "No", ]
+incyes <- inc[inc$hard_drugs == "Yes", ]
+incno <- inc[inc$hard_drugs == "No", ]
 
 demtab[10, 2] <- paste(nrow(inc[inc$income_cat == "< $10,000", ]), 
                        paste("(", round(nrow(inc[inc$income_cat == "< $10,000", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
@@ -290,7 +290,6 @@ demtab[11, 2] <- paste(nrow(inc[inc$income_cat == "$10,000 - $40,000", ]),
                        paste("(", round(nrow(inc[inc$income_cat == "$10,000 - $40,000", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
 demtab[12, 2] <- paste(nrow(inc[inc$income_cat == "> $40,000", ]), 
                        paste("(", round(nrow(inc[inc$income_cat == "> $40,000", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
-##############################ISSUES!!!!!####################################
 demtab[10, 3] <- paste(nrow(incyes[incyes$income_cat == "< $10,000", ]), 
                        paste("(", round(nrow(incyes[incyes$income_cat == "< $10,000", ])/nrow(incyes) * 100, 2), ")", sep = ""), sep = " ") 
 demtab[11, 3] <- paste(nrow(incyes[incyes$income_cat == "$10,000 - $40,000", ]), 
@@ -350,13 +349,13 @@ demtab[20, 3] <- paste(round(mean(leu3nyes$LEU3N), 2), "±", round(sd(leu3nyes$LE
 demtab[20, 4] <- paste(round(mean(leu3nno$LEU3N), 2), "±", round(sd(leu3nno$LEU3N), 2))
 demtab[20, 5] <- round(t.test(leu3n$LEU3N ~ leu3n$hard_drugs, var.equal = F)$p.value, 3)
 
-demtab[21, 1] <- "Baseline AGG_MENT score"
+demtab[21, 1] <- "Baseline SF36 MCS score"
 demtab[21, 2] <- paste(round(mean(aggment$AGG_MENT), 2), "±", round(sd(aggment$AGG_MENT), 2))
 demtab[21, 3] <- paste(round(mean(aggmentyes$AGG_MENT), 2), "±", round(sd(aggmentyes$AGG_MENT), 2))
 demtab[21, 4] <- paste(round(mean(aggmentno$AGG_MENT), 2), "±", round(sd(aggmentno$AGG_MENT), 2))
 demtab[21, 5] <- round(t.test(aggment$AGG_MENT ~ aggment$hard_drugs, var.equal = F)$p.value, 3)
 
-demtab[22, 1] <- "Baseline AGG_PHYS score"
+demtab[22, 1] <- "Baseline SF36 PCS score"
 demtab[22, 2] <- paste(round(mean(aggphys$AGG_PHYS), 2), "±", round(sd(aggphys$AGG_PHYS), 2))
 demtab[22, 3] <- paste(round(mean(aggphysyes$AGG_PHYS), 2), "±", round(sd(aggphysyes$AGG_PHYS), 2))
 demtab[22, 4] <- paste(round(mean(aggphysno$AGG_PHYS), 2), "±", round(sd(aggphysno$AGG_PHYS), 2))
