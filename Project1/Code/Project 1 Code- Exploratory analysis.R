@@ -155,6 +155,7 @@ colnames(hiv2)[3:7] <- c("AGG_MENT_2yr", "AGG_PHYS_2yr", "LEU3N_2yr",
                          "VLOAD_2yr", "adh_cat_2yr")
 
 hiv <- merge(hiv0_merge, hiv2, by = "newid")
+extra <- hiv
 
 ###########
 # Create difference variables
@@ -429,3 +430,54 @@ boxplot(hiv$diff_aggment ~ hiv$hard_drugs, ylab = "Difference in SF36 MCS Score"
         main = "Difference in SF36 MCS Score \nby Hard Drug Use")
 boxplot(hiv$diff_aggphys ~ hiv$hard_drugs, ylab = "Difference in SF36 PCS Score",
         main = "Difference in SF36 PCS Score \nby Hard Drug Use")
+
+
+#=============================================================#
+# Make dataset of indicator variables to import into SAS
+#=============================================================#
+
+names(extra)
+names(hiv)
+indic <- cbind.data.frame(extra, hiv[, 20:25])
+names(indic)
+
+indic <- indic[, -c(which(colnames(indic) == "AGG_MENT_2yr"),
+                    which(colnames(indic) == "AGG_PHYS_2yr"),
+                    which(colnames(indic) == "LEU3N_2yr"),
+                    which(colnames(indic) == "VLOAD_2yr"),
+                    which(colnames(indic) == "ADH"))]
+names(indic)
+
+summary(indic$hard_drugs)
+indic$harddrugsY <- NA
+indic$harddrugsY <- ifelse(indic$hard_drugs == "Yes", 1, 0)
+indic <- indic[, -which(colnames(indic) == "hard_drugs")]
+
+indic$raceNHW <- NA
+indic$raceNHW <- ifelse(indic$RACE_cat == "Non-Hispanic White", 1, 0)
+indic <- indic[, -which(colnames(indic) == "RACE_cat")]
+
+indic$drink13plus <- NA
+indic$drink13plus <- ifelse(indic$drink_cat == "> 13 drinks per week", 1, 0)
+indic <- indic[, -which(colnames(indic) == "drink_cat")]
+
+indic$smokecurrent <- NA
+indic$smokecurrent <- ifelse(indic$smoke_cat == "Current", 1, 0)
+indic <- indic[, -which(colnames(indic) == "smoke_cat")]
+
+indic$incomehigh <- NA
+indic$incomehigh <- ifelse(indic$income_cat == "> $40,000", 1, 0)
+indic$incomemed <- NA 
+indic$incomemed <- ifelse(indic$income_cat == "$10,000 - $40,000", 1, 0)
+indic <- indic[, -which(colnames(indic) == "income_cat")]
+
+indic$educHSmore <- NA
+indic$educHSmore <- ifelse(indic$educ_cat == ">HS", 1, 0)
+indic <- indic[, -which(colnames(indic) == "educ_cat")]
+
+indic$adhhigh <- NA
+indic$adhhigh <- ifelse(indic$adh_cat_2yr == ">95%", 1, 0)
+indic <- indic[, -which(colnames(indic) == "adh_cat_2yr")]
+
+setwd("~/School/AdvancedData")
+write.csv(indic, "IndicatorHIVdata09252017.csv")
