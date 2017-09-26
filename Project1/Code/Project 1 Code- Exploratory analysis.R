@@ -2,7 +2,7 @@
 # Project 1
 # Code by: Rachel Johnson
 # Started: 09/20/2017
-# Last updated: 09/23/2017
+# Last updated: 09/25/2017
 #=============================================================#
 
 #=============================================================#
@@ -159,16 +159,23 @@ hiv <- merge(hiv0_merge, hiv2, by = "newid")
 ###########
 # Create difference variables
 
-hiv$diff_vload <- hiv$VLOAD_2yr - hiv$VLOAD
 hiv$diff_leu3n <- hiv$LEU3N_2yr - hiv$LEU3N
 hiv$diff_aggment <- hiv$AGG_MENT_2yr - hiv$AGG_MENT
 hiv$diff_aggphys <- hiv$AGG_PHYS_2yr - hiv$AGG_PHYS
 
+#Log10 transform vload and then find difference
+hiv$logvload <- log10(hiv$VLOAD)
+hiv$logvload_2yr <- log10(hiv$VLOAD_2yr)
+boxplot(hiv$logvload, horizontal = TRUE)
+boxplot(hiv$logvload_2yr, horizontal = TRUE)
+
+hiv$diff_logvload <- hiv$logvload_2yr/hiv$logvload
+
 ##########
 # Make data set w/ no missing outcomes for each outocme
 vload <- hiv
-summary(vload$diff_vload) #only 19 missing
-vload <- vload[is.na(vload$diff_vload) == FALSE, ]
+summary(vload$diff_logvload) #only 19 missing
+vload <- vload[is.na(vload$diff_logvload) == FALSE, ]
   
 leu3n <- hiv
 summary(leu3n$diff_leu3n) #only 19 missing
@@ -374,12 +381,12 @@ outtab <- matrix(data = NA, nrow = 4, ncol = 4)
 colnames(outtab) <- c("", "Total", "Hard drugs = Yes", "Hard drugs = No")
 
 outtab[1, 1] <- "Difference in VLOAD"
-outtab[1, 2] <- paste(round(mean(hiv$diff_vload, na.rm = T), 2), 
-                      "±", round(sd(hiv$diff_vload, na.rm = T), 2))
-outtab[1, 3] <- paste(round(mean(hivyes$diff_vload, na.rm = T), 2), 
-                      "±", round(sd(hivyes$diff_vload, na.rm = T), 2))
-outtab[1, 4] <- paste(round(mean(hivno$diff_vload, na.rm = T), 2), 
-                      "±", round(sd(hivno$diff_vload, na.rm = T), 2))
+outtab[1, 2] <- paste(round(mean(hiv$diff_logvload, na.rm = T), 2), 
+                      "±", round(sd(hiv$diff_logvload, na.rm = T), 2))
+outtab[1, 3] <- paste(round(mean(hivyes$diff_logvload, na.rm = T), 2), 
+                      "±", round(sd(hivyes$diff_logvload, na.rm = T), 2))
+outtab[1, 4] <- paste(round(mean(hivno$diff_logvload, na.rm = T), 2), 
+                      "±", round(sd(hivno$diff_logvload, na.rm = T), 2))
 
 outtab[2, 1] <- "Difference in CD4+ count"
 outtab[2, 2] <- paste(round(mean(hiv$diff_leu3n, na.rm = T), 2), 
@@ -414,8 +421,8 @@ write.csv(outtab, "DifferenceOutcomesTable09242017.csv")
 #=============================================================#
 
 par(mfrow = c(2, 2))
-boxplot(hiv$diff_vload ~ hiv$hard_drugs, ylab = "Difference in Viral Load",
-        main = "Difference in Viral Load \nby Hard Drug Use")
+boxplot(hiv$diff_logvload ~ hiv$hard_drugs, ylab = "Difference in Viral Load",
+        main = "Difference in log10 Viral Load \nby Hard Drug Use")
 boxplot(hiv$diff_leu3n ~ hiv$hard_drugs, ylab = "Difference in CD4+ Count",
         main = "Difference in CD4+ Count \nby Hard Drug Use")
 boxplot(hiv$diff_aggment ~ hiv$hard_drugs, ylab = "Difference in SF36 MCS Score",
