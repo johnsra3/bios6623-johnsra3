@@ -173,23 +173,14 @@ boxplot(hiv$logvload_2yr, horizontal = TRUE)
 hiv$diff_logvload <- hiv$logvload_2yr/hiv$logvload
 
 ##########
-# Make data set w/ no missing outcomes for each outocme
-vload <- hiv
-summary(vload$diff_logvload) #only 19 missing
-vload <- vload[is.na(vload$diff_logvload) == FALSE, ]
-  
-leu3n <- hiv
-summary(leu3n$diff_leu3n) #only 19 missing
-leu3n <- leu3n[is.na(leu3n$diff_leu3n) == FALSE, ]
-
-aggment <- hiv
-summary(aggment$diff_aggment) #only 7 missing
-aggment <- aggment[is.na(aggment$diff_aggment) == FALSE, ]
-
-aggphys <- hiv
-summary(aggphys$diff_aggphys)
-aggphys <- aggphys[is.na(aggphys$diff_aggphys) == FALSE, ]
-
+test <- hiv
+table(test$hard_drugs) #467 no, 39 yes
+test <- test[is.na(test$diff_aggment) == FALSE, ]
+test <- test[is.na(test$diff_aggphys) == FALSE, ]
+test <- test[is.na(test$diff_leu3n) == FALSE, ]
+test <- test[is.na(test$diff_logvload) == FALSE, ]
+table(test$hard_drugs) #439 no, 39 yes-- doesn't affect # of ppl who yes hard drugs
+hiv <- test
 
 
 #=============================================================#
@@ -216,21 +207,6 @@ summary(hiv$age)
 # Make dataset for drugyes and drugno
 hivyes <- hiv[hiv$hard_drugs == "Yes", ]
 hivno <- hiv[hiv$hard_drugs == "No", ]
-
-########################
-# Outcome datasets for yes and no
-
-vloadyes <- vload[vload$hard_drugs == "Yes", ]
-vloadno <- vload[vload$hard_drugs == "No", ]
-
-leu3nyes <- leu3n[leu3n$hard_drugs == "Yes", ]
-leu3nno <- leu3n[leu3n$hard_drugs == "No", ]
-
-aggmentyes <- aggment[aggment$hard_drugs == "Yes", ]
-aggmentno <- aggment[aggment$hard_drugs == "No", ]
-
-aggphysyes <- aggphys[aggphys$hard_drugs == "Yes", ]
-aggphysno <- aggphys[aggphys$hard_drugs == "No", ]
 
 #need rows for age (1), bmi (1), hard_drugs (3), race_cat (3),
   #drink_cat (3), smoke_cat (3), income_cat (4), educ_cat (3),
@@ -337,24 +313,24 @@ demtab[18, 4] <- paste(nrow(hivno[hivno$adh_cat_2yr == ">95%", ]),
                       paste("(", round(nrow(hivno[hivno$adh_cat_2yr == ">95%", ])/nrow(hivno) * 100, 2), ")", sep = ""), sep = " ") 
 
 demtab[19, 1] <- "Baseline log10 viral load"
-demtab[19, 2] <- paste(round(mean(vload$logvload), 2), "±", round(sd(vload$logvload), 2))
-demtab[19, 3] <- paste(round(mean(vloadyes$logvload), 2), "±", round(sd(vloadyes$logvload), 2))
-demtab[19, 4] <- paste(round(mean(vloadno$logvload), 2), "±", round(sd(vloadno$logvload), 2))
+demtab[19, 2] <- paste(round(mean(hiv$logvload), 2), "±", round(sd(hiv$logvload), 2))
+demtab[19, 3] <- paste(round(mean(hivyes$logvload), 2), "±", round(sd(hivyes$logvload), 2))
+demtab[19, 4] <- paste(round(mean(hivno$logvload), 2), "±", round(sd(hivno$logvload), 2))
 
 demtab[20, 1] <- "Baseline CD4+ count"
-demtab[20, 2] <- paste(round(mean(leu3n$LEU3N), 2), "±", round(sd(leu3n$LEU3N), 2))
-demtab[20, 3] <- paste(round(mean(leu3nyes$LEU3N), 2), "±", round(sd(leu3nyes$LEU3N), 2))
-demtab[20, 4] <- paste(round(mean(leu3nno$LEU3N), 2), "±", round(sd(leu3nno$LEU3N), 2))
+demtab[20, 2] <- paste(round(mean(hiv$LEU3N), 2), "±", round(sd(hiv$LEU3N), 2))
+demtab[20, 3] <- paste(round(mean(hivyes$LEU3N), 2), "±", round(sd(hivyes$LEU3N), 2))
+demtab[20, 4] <- paste(round(mean(hivno$LEU3N), 2), "±", round(sd(hivno$LEU3N), 2))
 
 demtab[21, 1] <- "Baseline SF36 MCS score"
-demtab[21, 2] <- paste(round(mean(aggment$AGG_MENT), 2), "±", round(sd(aggment$AGG_MENT), 2))
-demtab[21, 3] <- paste(round(mean(aggmentyes$AGG_MENT), 2), "±", round(sd(aggmentyes$AGG_MENT), 2))
-demtab[21, 4] <- paste(round(mean(aggmentno$AGG_MENT), 2), "±", round(sd(aggmentno$AGG_MENT), 2))
+demtab[21, 2] <- paste(round(mean(hiv$AGG_MENT), 2), "±", round(sd(hiv$AGG_MENT), 2))
+demtab[21, 3] <- paste(round(mean(hivyes$AGG_MENT), 2), "±", round(sd(hivyes$AGG_MENT), 2))
+demtab[21, 4] <- paste(round(mean(hivno$AGG_MENT), 2), "±", round(sd(hivno$AGG_MENT), 2))
 
 demtab[22, 1] <- "Baseline SF36 PCS score"
-demtab[22, 2] <- paste(round(mean(aggphys$AGG_PHYS), 2), "±", round(sd(aggphys$AGG_PHYS), 2))
-demtab[22, 3] <- paste(round(mean(aggphysyes$AGG_PHYS), 2), "±", round(sd(aggphysyes$AGG_PHYS), 2))
-demtab[22, 4] <- paste(round(mean(aggphysno$AGG_PHYS), 2), "±", round(sd(aggphysno$AGG_PHYS), 2))
+demtab[22, 2] <- paste(round(mean(hiv$AGG_PHYS), 2), "±", round(sd(hiv$AGG_PHYS), 2))
+demtab[22, 3] <- paste(round(mean(hivyes$AGG_PHYS), 2), "±", round(sd(hivyes$AGG_PHYS), 2))
+demtab[22, 4] <- paste(round(mean(hivno$AGG_PHYS), 2), "±", round(sd(hivno$AGG_PHYS), 2))
 
 
 setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
@@ -384,7 +360,7 @@ outtab[2, 3] <- paste(round(mean(hivyes$diff_leu3n, na.rm = T), 2),
 outtab[2, 4] <- paste(round(mean(hivno$diff_leu3n, na.rm = T), 2), 
                       "±", round(sd(hivno$diff_leu3n, na.rm = T), 2))
 
-outtab[3, 1] <- "Difference in AGG_MENT score"
+outtab[3, 1] <- "Difference in SF36 MCS score"
 outtab[3, 2] <- paste(round(mean(hiv$diff_aggment, na.rm = T), 2), "±", 
                       round(sd(hiv$diff_aggment, na.rm = T), 2))
 outtab[3, 3] <- paste(round(mean(hiv$diff_aggment, na.rm = T), 2), "±", 
@@ -392,7 +368,7 @@ outtab[3, 3] <- paste(round(mean(hiv$diff_aggment, na.rm = T), 2), "±",
 outtab[3, 4] <- paste(round(mean(hiv$diff_aggment, na.rm = T), 2), "±", 
                       round(sd(hiv$diff_aggment, na.rm = T), 2))
 
-outtab[4, 1] <- "Difference in AGG_PHYS score"
+outtab[4, 1] <- "Difference in SF36 PCS score"
 outtab[4, 2] <- paste(round(mean(hiv$diff_aggphys, na.rm = T), 2), "±", 
                       round(sd(hiv$diff_aggphys, na.rm = T), 2))
 outtab[4, 3] <- paste(round(mean(hiv$diff_aggphys, na.rm = T), 2), "±", 
