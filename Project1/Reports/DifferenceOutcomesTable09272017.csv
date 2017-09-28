@@ -1,5 +1,5 @@
 "","","Total","Hard drugs = Yes","Hard drugs = No"
-"1","Difference in VLOAD","-1000415.39 ± 11398442.9","-151331.18 ± 405877.63","-1074331.2 ± 11881827.04"
+"1","Difference in log10 viral load","0.41 ± 0.36","0.39 ± 0.25","0.41 ± 0.37"
 "2","Difference in CD4+ count","169.3 ± 183.54","13.43 ± 195.73","182.87 ± 176.26"
 "3","Difference in AGG_MENT score","2.21 ± 11.99","2.21 ± 11.99","2.21 ± 11.99"
 "4","Difference in AGG_PHYS score","-1.64 ± 8.45","-1.64 ± 8.45","-1.64 ± 8.45"
