@@ -18,10 +18,15 @@ RUN;
 *-----------------------------------------------------------;
 * Model for LEU3N with hard_drugs and baseline only
 *-----------------------------------------------------------;
-*Huge autocorrelation problem!;
+*Huge autocorrelation problem w/ all betas in one PARMS statement,
+	so moved them to separate statements;
+*Still need to increase nbi and nmc to improve trace plots;
+*DIC (5000 nbi 50000 nmc): 6603.531;
 
-PROC MCMC data = hiv nbi = 1000 nmc = 10000 plots = all DIC;
-	PARMS betaint 0 betaLEU3N 0 betadrugs 0;
+PROC MCMC data = hiv nbi = 5000 nmc = 50000 plots = all DIC;
+	PARMS betaint 0;
+	PARMS betaLEU3N 0 ;
+	PARMS betadrugs 0;
 	PARMS sigma2 1;
 	PRIOR betaint betaLEU3N betadrugs ~ normal(mean = 0, var = 1000);
 	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
@@ -33,12 +38,21 @@ RUN; title;
 *-----------------------------------------------------------;
 * Full model for LEU3N
 *-----------------------------------------------------------;
-*Haven't run yet b/c issues so bad in 1st LEU3N model;
+*W/ 5000 nbi and 50000 nmc, having issues w/ betaint and betaage mixing;
 
-PROC MCMC data = hiv nbi = 1000 nmc = 10000 plots = all DIC;
-	PARMS betaint 0 betaLEU3N 0 betadrugs 0 betaage 0 betabmi 0 betaadh 0
-		betarace 0 betadrink 0 betasmoke 0 betaincmed 0 betainchigh 0
-		betaeduc 0;
+PROC MCMC data = hiv nbi = 5000 nmc = 50000 plots = all DIC;
+	PARMS betaint 0;
+	PARMS betaLEU3N 0;
+	PARMS betadrugs 0;
+	PARMS betaage 0;
+	PARMS betabmi 0;
+	PARMS betaadh 0;
+	PARMS betarace 0;
+	PARMS betadrink 0;
+	PARMS betasmoke 0;
+	PARMS betaincmed 0;
+	PARMS betainchigh 0;
+	PARMS betaeduc 0;
 	PARMS sigma2 1;
 	PRIOR betaint betaLEU3N betadrugs betaage betabmi betaadh betarace
 		betadrink betasmoke betaincmed betainchigh betaeduc ~ normal(mean = 0, var = 1000);
