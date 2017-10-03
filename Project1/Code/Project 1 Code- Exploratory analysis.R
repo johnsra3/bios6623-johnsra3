@@ -63,6 +63,12 @@ hiv0$drink_cat <- hiv0$DKGRP
 hiv0$drink_cat <- ifelse(hiv0$DKGRP == 3, "> 13 drinks per week", "13 or fewer drinks per week")
 table(hiv0$drink_cat)
 
+#Marijuana
+table(hiv0$HASHV)
+hiv0$marij_cat <- hiv0$HASHV
+hiv0$marij_cat <- ifelse(hiv0$HASHV == 2, "Yes", "No")
+table(hiv0$marij_cat)
+
 #Smoking
 table(hiv0$SMOKE)
 hiv0$smoke_cat <- hiv0$SMOKE
@@ -103,6 +109,10 @@ names(hiv0)
 table(hiv0$hard_drugs)
 hiv0$hard_drugs <- factor(hiv0$hard_drugs, levels = c("0", "1"),
                           labels = c("No", "Yes"))
+
+#marij_cat
+table(hiv0$marij_cat) 
+hiv0$marij_cat <- factor(hiv0$marij_cat, levels = c("Yes", "No"))
 
 #RACE_cat
 table(hiv0$RACE_cat)
@@ -147,6 +157,7 @@ hiv0_merge <- hiv0[, c(which(colnames(hiv0) == "newid"),
                        which(colnames(hiv0) == "BMI"),
                        which(colnames(hiv0) == "RACE_cat"),
                        which(colnames(hiv0) == "drink_cat"),
+                       which(colnames(hiv0) == "marij_cat"),
                        which(colnames(hiv0) == "smoke_cat"),
                        which(colnames(hiv0) == "income_cat"),
                        which(colnames(hiv0) == "educ_cat"))]
@@ -155,7 +166,7 @@ colnames(hiv2)[3:7] <- c("AGG_MENT_2yr", "AGG_PHYS_2yr", "LEU3N_2yr",
                          "VLOAD_2yr", "adh_cat_2yr")
 
 hiv <- merge(hiv0_merge, hiv2, by = "newid")
-extra <- hiv
+
 
 ###########
 # Create difference variables
@@ -181,7 +192,7 @@ test <- test[is.na(test$diff_leu3n) == FALSE, ]
 test <- test[is.na(test$diff_logvload) == FALSE, ]
 table(test$hard_drugs) #439 no, 39 yes-- doesn't affect # of ppl who yes hard drugs
 hiv <- test
-
+extra <- hiv
 
 #=============================================================#
 # Summarize rest of cont. variables to get rid of NA coding
@@ -205,14 +216,15 @@ summary(hiv$age)
 
 ############
 # Make dataset for drugyes and drugno
+table(hiv$hard_drugs)
 hivyes <- hiv[hiv$hard_drugs == "Yes", ]
 hivno <- hiv[hiv$hard_drugs == "No", ]
 
 #need rows for age (1), bmi (1), hard_drugs (3), race_cat (3),
-  #drink_cat (3), smoke_cat (3), income_cat (4), educ_cat (3),
+  #drink_cat (3), smoke_cat (3), marij_cat (3), income_cat (4), educ_cat (3),
   #ADH (3), baseline vload (1), baseline leu3n (1),
   #baseline aggment (1), baseline aggphys (1)
-demtab <- matrix(data = NA, nrow = 22, ncol = 4)
+demtab <- matrix(data = NA, nrow = 25, ncol = 4)
 colnames(demtab) <- c("", "Total", "Hard drugs = Yes", "Hard drugs = No")
 
 demtab[1, 1] <- "Age at baseline"
@@ -255,86 +267,101 @@ demtab[7, 4] <- paste(nrow(hivno[hivno$smoke_cat == "Never/former", ]),
 demtab[8, 4] <- paste(nrow(hivno[hivno$smoke_cat == "Current", ]), 
                       paste("(", round(nrow(hivno[hivno$smoke_cat == "Current", ])/nrow(hivno) * 100, 2), ")", sep = ""), sep = " ") 
 
-demtab[9, 1] <- "Income level at baseline"
-demtab[10:12, 1] <- levels(hiv$income_cat)
+demtab[9, 1] <- "Marijuana use at baseline"
+demtab[10:11, 1] <- levels(hiv$marij_cat)
+demtab[10, 2] <- paste(nrow(hiv[hiv$marij_cat == "Yes", ]), 
+                       paste("(", round(nrow(hiv[hiv$marij_cat == "Yes", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
+demtab[10, 3] <- paste(nrow(hivyes[hivyes$marij_cat == "Yes", ]), 
+                       paste("(", round(nrow(hivyes[hivyes$marij_cat == "Yes", ])/nrow(hivyes) * 100, 2), ")", sep = ""), sep = " ") 
+demtab[10, 4] <- paste(nrow(hivno[hivno$marij_cat == "Yes", ]), 
+                       paste("(", round(nrow(hivno[hivno$marij_cat == "Yes", ])/nrow(hivno) * 100, 2), ")", sep = ""), sep = " ") 
+demtab[11, 2] <- paste(nrow(hiv[hiv$marij_cat == "No", ]), 
+                       paste("(", round(nrow(hiv[hiv$marij_cat == "No", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
+demtab[11, 3] <- paste(nrow(hivyes[hivyes$marij_cat == "No", ]), 
+                       paste("(", round(nrow(hivyes[hivyes$marij_cat == "No", ])/nrow(hivyes) * 100, 2), ")", sep = ""), sep = " ") 
+demtab[11, 4] <- paste(nrow(hivno[hivno$marij_cat == "No", ]), 
+                       paste("(", round(nrow(hivno[hivno$marij_cat == "No", ])/nrow(hivno) * 100, 2), ")", sep = ""), sep = " ") 
+
+demtab[12, 1] <- "Income level at baseline"
+demtab[13:15, 1] <- levels(hiv$income_cat)
 inc <- cbind.data.frame(hiv$income_cat, hiv$newid, hiv$hard_drugs)
 inc <- inc[is.na(inc$`hiv$income_cat`) == FALSE, ]
 colnames(inc) <- c("income_cat", "newid", "hard_drugs")
 incyes <- inc[inc$hard_drugs == "Yes", ]
 incno <- inc[inc$hard_drugs == "No", ]
 
-demtab[10, 2] <- paste(nrow(inc[inc$income_cat == "< $10,000", ]), 
+demtab[13, 2] <- paste(nrow(inc[inc$income_cat == "< $10,000", ]), 
                        paste("(", round(nrow(inc[inc$income_cat == "< $10,000", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[11, 2] <- paste(nrow(inc[inc$income_cat == "$10,000 - $40,000", ]), 
+demtab[14, 2] <- paste(nrow(inc[inc$income_cat == "$10,000 - $40,000", ]), 
                        paste("(", round(nrow(inc[inc$income_cat == "$10,000 - $40,000", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[12, 2] <- paste(nrow(inc[inc$income_cat == "> $40,000", ]), 
+demtab[15, 2] <- paste(nrow(inc[inc$income_cat == "> $40,000", ]), 
                        paste("(", round(nrow(inc[inc$income_cat == "> $40,000", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[10, 3] <- paste(nrow(incyes[incyes$income_cat == "< $10,000", ]), 
+demtab[13, 3] <- paste(nrow(incyes[incyes$income_cat == "< $10,000", ]), 
                        paste("(", round(nrow(incyes[incyes$income_cat == "< $10,000", ])/nrow(incyes) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[11, 3] <- paste(nrow(incyes[incyes$income_cat == "$10,000 - $40,000", ]), 
+demtab[14, 3] <- paste(nrow(incyes[incyes$income_cat == "$10,000 - $40,000", ]), 
                        paste("(", round(nrow(incyes[incyes$income_cat == "$10,000 - $40,000", ])/nrow(incyes) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[12, 3] <- paste(nrow(incyes[incyes$income_cat == "> $40,000", ]), 
+demtab[15, 3] <- paste(nrow(incyes[incyes$income_cat == "> $40,000", ]), 
                        paste("(", round(nrow(incyes[incyes$income_cat == "> $40,000", ])/nrow(incyes) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[10, 4] <- paste(nrow(incno[incno$income_cat == "< $10,000", ]), 
+demtab[13, 4] <- paste(nrow(incno[incno$income_cat == "< $10,000", ]), 
                      paste("(", round(nrow(incno[incno$income_cat == "< $10,000", ])/nrow(incno) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[11, 4] <- paste(nrow(incno[incno$income_cat == "$10,000 - $40,000", ]), 
+demtab[14, 4] <- paste(nrow(incno[incno$income_cat == "$10,000 - $40,000", ]), 
                        paste("(", round(nrow(incno[incno$income_cat == "$10,000 - $40,000", ])/nrow(incno) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[12, 4] <- paste(nrow(incno[incno$income_cat == "> $40,000", ]), 
+demtab[15, 4] <- paste(nrow(incno[incno$income_cat == "> $40,000", ]), 
                        paste("(", round(nrow(incno[incno$income_cat == "> $40,000", ])/nrow(incno) * 100, 2), ")", sep = ""), sep = " ") 
 
-demtab[13, 1] <- "Education at baseline"
-demtab[14:15, 1] <- levels(hiv$educ_cat)
-demtab[14, 2] <- paste(nrow(hiv[hiv$educ_cat == "HS or less", ]), 
+demtab[16, 1] <- "Education at baseline"
+demtab[17:18, 1] <- levels(hiv$educ_cat)
+demtab[17, 2] <- paste(nrow(hiv[hiv$educ_cat == "HS or less", ]), 
                        paste("(", round(nrow(hiv[hiv$educ_cat == "HS or less", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[15, 2] <- paste(nrow(hiv[hiv$educ_cat == ">HS", ]), 
+demtab[18, 2] <- paste(nrow(hiv[hiv$educ_cat == ">HS", ]), 
                        paste("(", round(nrow(hiv[hiv$educ_cat == ">HS", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[14, 3] <- paste(nrow(hivyes[hivyes$educ_cat == "HS or less", ]), 
+demtab[17, 3] <- paste(nrow(hivyes[hivyes$educ_cat == "HS or less", ]), 
                        paste("(", round(nrow(hivyes[hivyes$educ_cat == "HS or less", ])/nrow(hivyes) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[15, 3] <- paste(nrow(hivyes[hivyes$educ_cat == ">HS", ]), 
+demtab[18, 3] <- paste(nrow(hivyes[hivyes$educ_cat == ">HS", ]), 
                        paste("(", round(nrow(hivyes[hivyes$educ_cat == ">HS", ])/nrow(hivyes) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[14, 4] <- paste(nrow(hivno[hivno$educ_cat == "HS or less", ]), 
+demtab[17, 4] <- paste(nrow(hivno[hivno$educ_cat == "HS or less", ]), 
                        paste("(", round(nrow(hivno[hivno$educ_cat == "HS or less", ])/nrow(hivno) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[15, 4] <- paste(nrow(hivno[hivno$educ_cat == ">HS", ]), 
+demtab[18, 4] <- paste(nrow(hivno[hivno$educ_cat == ">HS", ]), 
                        paste("(", round(nrow(hivno[hivno$educ_cat == ">HS", ])/nrow(hivno) * 100, 2), ")", sep = ""), sep = " ") 
 
-demtab[16, 1] <- "Adherence at 2 years"
-demtab[17:18, 1] <- levels(hiv$adh_cat_2yr)
-demtab[17, 2] <- paste(nrow(hiv[hiv$adh_cat_2yr == "<95%", ]), 
+demtab[19, 1] <- "Adherence at 2 years"
+demtab[20:21, 1] <- levels(hiv$adh_cat_2yr)
+demtab[20, 2] <- paste(nrow(hiv[hiv$adh_cat_2yr == "<95%", ]), 
                        paste("(", round(nrow(hiv[hiv$adh_cat_2yr == "<95%", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[18, 2] <-paste(nrow(hiv[hiv$adh_cat_2yr == ">95%", ]), 
+demtab[21, 2] <-paste(nrow(hiv[hiv$adh_cat_2yr == ">95%", ]), 
                       paste("(", round(nrow(hiv[hiv$adh_cat_2yr == ">95%", ])/nrow(hiv) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[17, 3] <- paste(nrow(hivyes[hivyes$adh_cat_2yr == "<95%", ]), 
+demtab[20, 3] <- paste(nrow(hivyes[hivyes$adh_cat_2yr == "<95%", ]), 
                        paste("(", round(nrow(hivyes[hivyes$adh_cat_2yr == "<95%", ])/nrow(hivyes) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[18, 3] <-paste(nrow(hivyes[hivyes$adh_cat_2yr == ">95%", ]), 
+demtab[21, 3] <-paste(nrow(hivyes[hivyes$adh_cat_2yr == ">95%", ]), 
                       paste("(", round(nrow(hivyes[hivyes$adh_cat_2yr == ">95%", ])/nrow(hivyes) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[17, 4] <- paste(nrow(hivno[hivno$adh_cat_2yr == "<95%", ]), 
+demtab[20, 4] <- paste(nrow(hivno[hivno$adh_cat_2yr == "<95%", ]), 
                        paste("(", round(nrow(hivno[hivno$adh_cat_2yr == "<95%", ])/nrow(hivno) * 100, 2), ")", sep = ""), sep = " ") 
-demtab[18, 4] <- paste(nrow(hivno[hivno$adh_cat_2yr == ">95%", ]), 
+demtab[21, 4] <- paste(nrow(hivno[hivno$adh_cat_2yr == ">95%", ]), 
                       paste("(", round(nrow(hivno[hivno$adh_cat_2yr == ">95%", ])/nrow(hivno) * 100, 2), ")", sep = ""), sep = " ") 
 
-demtab[19, 1] <- "Baseline log10 viral load"
-demtab[19, 2] <- paste(round(mean(hiv$logvload), 2), "±", round(sd(hiv$logvload), 2))
-demtab[19, 3] <- paste(round(mean(hivyes$logvload), 2), "±", round(sd(hivyes$logvload), 2))
-demtab[19, 4] <- paste(round(mean(hivno$logvload), 2), "±", round(sd(hivno$logvload), 2))
+demtab[22, 1] <- "Baseline log10 viral load"
+demtab[22, 2] <- paste(round(mean(hiv$logvload), 2), "±", round(sd(hiv$logvload), 2))
+demtab[22, 3] <- paste(round(mean(hivyes$logvload), 2), "±", round(sd(hivyes$logvload), 2))
+demtab[22, 4] <- paste(round(mean(hivno$logvload), 2), "±", round(sd(hivno$logvload), 2))
 
-demtab[20, 1] <- "Baseline CD4+ count"
-demtab[20, 2] <- paste(round(mean(hiv$LEU3N), 2), "±", round(sd(hiv$LEU3N), 2))
-demtab[20, 3] <- paste(round(mean(hivyes$LEU3N), 2), "±", round(sd(hivyes$LEU3N), 2))
-demtab[20, 4] <- paste(round(mean(hivno$LEU3N), 2), "±", round(sd(hivno$LEU3N), 2))
+demtab[23, 1] <- "Baseline CD4+ count"
+demtab[23, 2] <- paste(round(mean(hiv$LEU3N), 2), "±", round(sd(hiv$LEU3N), 2))
+demtab[23, 3] <- paste(round(mean(hivyes$LEU3N), 2), "±", round(sd(hivyes$LEU3N), 2))
+demtab[23, 4] <- paste(round(mean(hivno$LEU3N), 2), "±", round(sd(hivno$LEU3N), 2))
 
-demtab[21, 1] <- "Baseline SF36 MCS score"
-demtab[21, 2] <- paste(round(mean(hiv$AGG_MENT), 2), "±", round(sd(hiv$AGG_MENT), 2))
-demtab[21, 3] <- paste(round(mean(hivyes$AGG_MENT), 2), "±", round(sd(hivyes$AGG_MENT), 2))
-demtab[21, 4] <- paste(round(mean(hivno$AGG_MENT), 2), "±", round(sd(hivno$AGG_MENT), 2))
+demtab[24, 1] <- "Baseline SF36 MCS score"
+demtab[24, 2] <- paste(round(mean(hiv$AGG_MENT), 2), "±", round(sd(hiv$AGG_MENT), 2))
+demtab[24, 3] <- paste(round(mean(hivyes$AGG_MENT), 2), "±", round(sd(hivyes$AGG_MENT), 2))
+demtab[24, 4] <- paste(round(mean(hivno$AGG_MENT), 2), "±", round(sd(hivno$AGG_MENT), 2))
 
-demtab[22, 1] <- "Baseline SF36 PCS score"
-demtab[22, 2] <- paste(round(mean(hiv$AGG_PHYS), 2), "±", round(sd(hiv$AGG_PHYS), 2))
-demtab[22, 3] <- paste(round(mean(hivyes$AGG_PHYS), 2), "±", round(sd(hivyes$AGG_PHYS), 2))
-demtab[22, 4] <- paste(round(mean(hivno$AGG_PHYS), 2), "±", round(sd(hivno$AGG_PHYS), 2))
+demtab[25, 1] <- "Baseline SF36 PCS score"
+demtab[25, 2] <- paste(round(mean(hiv$AGG_PHYS), 2), "±", round(sd(hiv$AGG_PHYS), 2))
+demtab[25, 3] <- paste(round(mean(hivyes$AGG_PHYS), 2), "±", round(sd(hivyes$AGG_PHYS), 2))
+demtab[25, 4] <- paste(round(mean(hivno$AGG_PHYS), 2), "±", round(sd(hivno$AGG_PHYS), 2))
 
 
 #setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
-#write.csv(demtab, "DemographicsTable09272017.csv")
+#write.csv(demtab, "DemographicsTable10022017.csv")
 
 
 #=============================================================#
@@ -428,6 +455,10 @@ indic$smokecurrent <- NA
 indic$smokecurrent <- ifelse(indic$smoke_cat == "Current", 1, 0)
 indic <- indic[, -which(colnames(indic) == "smoke_cat")]
 
+indic$marijY <- NA
+indic$marijY <- ifelse(indic$marij_cat == "Yes", 1, 0)
+indic <- indic[, -which(colnames(indic) == "marij_cat")]
+
 indic$incomehigh <- NA
 indic$incomehigh <- ifelse(indic$income_cat == "> $40,000", 1, 0)
 indic$incomemed <- NA 
@@ -443,4 +474,4 @@ indic$adhhigh <- ifelse(indic$adh_cat_2yr == ">95%", 1, 0)
 indic <- indic[, -which(colnames(indic) == "adh_cat_2yr")]
 
 setwd("~/School/AdvancedData")
-write.csv(indic, "IndicatorHIVdata09252017.csv")
+write.csv(indic, "IndicatorHIVdata10022017.csv")
