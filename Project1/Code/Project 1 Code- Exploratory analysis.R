@@ -333,8 +333,8 @@ demtab[22, 3] <- paste(round(mean(hivyes$AGG_PHYS), 2), "±", round(sd(hivyes$AGG
 demtab[22, 4] <- paste(round(mean(hivno$AGG_PHYS), 2), "±", round(sd(hivno$AGG_PHYS), 2))
 
 
-setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
-write.csv(demtab, "DemographicsTable09272017.csv")
+#setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
+#write.csv(demtab, "DemographicsTable09272017.csv")
 
 
 #=============================================================#
@@ -363,18 +363,18 @@ outtab[2, 4] <- paste(round(mean(hivno$diff_leu3n, na.rm = T), 2),
 outtab[3, 1] <- "Difference in SF36 MCS score"
 outtab[3, 2] <- paste(round(mean(hiv$diff_aggment, na.rm = T), 2), "±", 
                       round(sd(hiv$diff_aggment, na.rm = T), 2))
-outtab[3, 3] <- paste(round(mean(hiv$diff_aggment, na.rm = T), 2), "±", 
-                      round(sd(hiv$diff_aggment, na.rm = T), 2))
-outtab[3, 4] <- paste(round(mean(hiv$diff_aggment, na.rm = T), 2), "±", 
-                      round(sd(hiv$diff_aggment, na.rm = T), 2))
+outtab[3, 3] <- paste(round(mean(hivyes$diff_aggment, na.rm = T), 2), "±", 
+                      round(sd(hivyes$diff_aggment, na.rm = T), 2))
+outtab[3, 4] <- paste(round(mean(hivno$diff_aggment, na.rm = T), 2), "±", 
+                      round(sd(hivno$diff_aggment, na.rm = T), 2))
 
 outtab[4, 1] <- "Difference in SF36 PCS score"
 outtab[4, 2] <- paste(round(mean(hiv$diff_aggphys, na.rm = T), 2), "±", 
                       round(sd(hiv$diff_aggphys, na.rm = T), 2))
-outtab[4, 3] <- paste(round(mean(hiv$diff_aggphys, na.rm = T), 2), "±", 
-                      round(sd(hiv$diff_aggphys, na.rm = T), 2))
-outtab[4, 4] <- paste(round(mean(hiv$diff_aggphys, na.rm = T), 2), "±", 
-                      round(sd(hiv$diff_aggphys, na.rm = T), 2))
+outtab[4, 3] <- paste(round(mean(hivyes$diff_aggphys, na.rm = T), 2), "±", 
+                      round(sd(hivyes$diff_aggphys, na.rm = T), 2))
+outtab[4, 4] <- paste(round(mean(hivno$diff_aggphys, na.rm = T), 2), "±", 
+                      round(sd(hivno$diff_aggphys, na.rm = T), 2))
 
 setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
 write.csv(outtab, "DifferenceOutcomesTable09272017.csv")
