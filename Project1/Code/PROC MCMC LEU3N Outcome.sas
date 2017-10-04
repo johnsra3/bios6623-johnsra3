@@ -202,4 +202,26 @@ PROC MCMC data = hiv nbi = 7500 nmc = 250000 thin = 10 plots = all DIC seed = 20
 	title "Full Model of CD4+ count (rem. drink/smoke + educ.)";
 RUN; title;
 
-*final model: remove drink, smoke, educ;
+
+*-----------------------------------------------------------;
+* Next model: remove drink and smoke together (and marij)
+*-----------------------------------------------------------;
+*DIC: 5880.650, can remove marijuana;
+
+PROC MCMC data = hiv nbi = 7500 nmc = 250000 thin = 10 plots = all DIC seed = 204;
+	PARMS betaint 0 betaLEU3N 0 betadrugs 0 betaage 0 betabmi 0 betaadh 0
+		betarace 0 betaincmed 0 betainchigh 0 
+		betaeduc 0;
+	PARMS sigma2 1;
+	PRIOR betaint betaLEU3N betadrugs betaage betabmi betaadh betarace
+		betaincmed betainchigh betaeduc ~ normal(mean = 0, var = 1000);
+	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
+	mu = betaint + betaLEU3N*LEU3N + betadrugs*harddrugsY + betaage*age +
+		betabmi*BMI + betaadh*adhhigh + betarace*raceNHW +
+		betaincmed*incomemed + betainchigh*incomehigh +
+		betaeduc*educHSmore;
+	model diff_LEU3N ~ normal(mu, var = sigma2);
+	title "Full Model of CD4+ count (rem. drink/smoke + marij)";
+RUN; title;
+
+*final model: remove drink, smoke, educ, marij;
