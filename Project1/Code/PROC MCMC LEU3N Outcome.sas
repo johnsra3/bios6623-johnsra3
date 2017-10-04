@@ -16,6 +16,22 @@ PROC IMPORT datafile = "C:\Users\johnsra3\Documents\School\AdvancedData\Indicato
 RUN;
 
 *-----------------------------------------------------------;
+* Crude model for LEU3N for drugs only (and base)
+*-----------------------------------------------------------;
+*DIC: 6299.101, DIC is better w/ other things in model;
+
+PROC MCMC data = hiv nbi = 7500 nmc = 250000 thin = 10 plots = all DIC seed = 204;
+	PARMS betaint 0 betaLEU3N 0 betadrugs 0;
+	PARMS sigma2 1;
+	PRIOR betaint betaLEU3N betadrugs ~ normal(mean = 0, var = 1000);
+	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
+	mu = betaint + betaLEU3N*LEU3N + betadrugs*harddrugsY;
+	model diff_LEU3N ~ normal(mu, var = sigma2);
+	title "Crude Model of CD4+ count (drugs)";
+RUN; title;
+
+
+*-----------------------------------------------------------;
 * Full model for LEU3N
 *-----------------------------------------------------------;
 *DIC: 5879.523;

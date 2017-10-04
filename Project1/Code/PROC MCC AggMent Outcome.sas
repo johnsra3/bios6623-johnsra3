@@ -16,6 +16,21 @@ PROC IMPORT datafile = "C:\Users\johnsra3\Documents\School\AdvancedData\Indicato
 RUN;
 
 *-----------------------------------------------------------;
+* Crude model for AGG_MENT (drugs and base only)
+*-----------------------------------------------------------;
+*DIC: 3547.100, better in big model, wh/ is good;
+
+PROC MCMC data = hiv nbi = 2500 nmc = 30000 plots = all DIC;
+	PARMS betaint 0 betaAM 0 betadrugs 0;
+	PARMS sigma2 1;
+	PRIOR betaint betaAM betadrugs ~ normal(mean = 0, var = 1000);
+	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
+	mu = betaint + betaAM*AGG_MENT + betadrugs*harddrugsY;
+	model diff_aggment ~ normal(mu, var = sigma2);
+	title "Crude Model of Aggregate Mental Score";
+RUN; title;
+
+*-----------------------------------------------------------;
 * Full model for AGG_MENT
 *-----------------------------------------------------------;
 *First run: 2500 nbi, 30000 nmc;

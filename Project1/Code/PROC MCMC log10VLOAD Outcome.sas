@@ -16,6 +16,22 @@ PROC IMPORT datafile = "C:\Users\johnsra3\Documents\School\AdvancedData\Indicato
 RUN;
 
 *-----------------------------------------------------------;
+* Crude model of just drugs (and baseline)
+*-----------------------------------------------------------;
+*DIC: 390.449 (better for full model);
+
+PROC MCMC data = hiv nbi = 2500 nmc = 50000 plots = all DIC;
+	PARMS betaint 0 betalogvload 0 betadrugs 0;
+	PARMS sigma2 1;
+	PRIOR betaint betalogvload betadrugs ~ normal(mean = 0, var = 1000);
+	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
+	mu = betaint + betalogvload*logvload + betadrugs*harddrugsY;
+	model diff_logvload ~ normal(mu, var = sigma2);
+	title "Crude Model of log10 VLOAD (drugs only)";
+RUN; title;
+
+
+*-----------------------------------------------------------;
 * Full model of log10vload
 *-----------------------------------------------------------;
 *DIC: 372.812;

@@ -16,6 +16,22 @@ PROC IMPORT datafile = "C:\Users\johnsra3\Documents\School\AdvancedData\Indicato
 RUN;
 
 *-----------------------------------------------------------;
+* Crude model for agg_phys (drugs + base only)
+*-----------------------------------------------------------;
+*DIC: 3320.175, DIC is better in full model :);
+
+PROC MCMC data = hiv nbi = 2500 nmc = 30000 plots = all DIC seed = 204;
+	PARMS betaint 0 betaAP 0 betadrugs 0;
+	PARMS sigma2 1;
+	PRIOR betaint betaAP betadrugs ~ normal(mean = 0, var = 1000);
+	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
+	mu = betaint + betaAP*AGG_PHYS + betadrugs*harddrugsY;
+	model diff_aggphys ~ normal(mu, var = sigma2);
+	title "Crude Model of Aggregate Physical Score";
+RUN; title;
+
+
+*-----------------------------------------------------------;
 * Full model for agg_phys
 *-----------------------------------------------------------;
 *First run: 2500 burning, 30000 its, DIC: 3094.218;
