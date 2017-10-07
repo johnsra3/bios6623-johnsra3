@@ -18,7 +18,7 @@ RUN;
 *-----------------------------------------------------------;
 * Crude model for AGG_MENT (drugs and base only)
 *-----------------------------------------------------------;
-*DIC: 3547.100, better in big model, wh/ is good;
+*DIC: 3547.111, better in big model, wh/ is good;
 
 PROC MCMC data = hiv nbi = 2500 nmc = 30000 plots = all DIC;
 	PARMS betaint 0 betaAM 0 betadrugs 0;
