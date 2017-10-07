@@ -23,7 +23,8 @@ RUN;
 PROC MCMC data = hiv nbi = 2500 nmc = 30000 plots = all DIC seed = 204;
 	PARMS betaint 0 betaAP 0 betadrugs 0;
 	PARMS sigma2 1;
-	PRIOR betaint betaAP betadrugs ~ normal(mean = 0, var = 1000);
+	PRIOR betaAP betadrugs ~ normal(mean = 0, var = 1000);
+	PRIOR betaint ~ normal(mean = 0, var = 10000);
 	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
 	mu = betaint + betaAP*AGG_PHYS + betadrugs*harddrugsY;
 	model diff_aggphys ~ normal(mu, var = sigma2);
@@ -41,8 +42,9 @@ PROC MCMC data = hiv nbi = 2500 nmc = 30000 plots = all DIC seed = 204;
 		betarace 0 betadrink 0 betasmoke 0 betamarij 0 betaincmed 0 betainchigh 0
 		betaeduc 0;
 	PARMS sigma2 1;
-	PRIOR betaint betaAP betadrugs betaage betabmi betaadh betarace
+	PRIOR betaAP betadrugs betaage betabmi betaadh betarace
 		betadrink betasmoke betamarij betaincmed betainchigh betaeduc ~ normal(mean = 0, var = 1000);
+	PRIOR betaint ~ normal(mean = 0, var = 10000);
 	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
 	mu = betaint + betaAP*AGG_PHYS + betadrugs*harddrugsY + betaage*age +
 		betabmi*BMI + betaadh*adhhigh + betarace*raceNHW + betadrink*drink13plus +
@@ -63,8 +65,9 @@ PROC MCMC data = hiv nbi = 2500 nmc = 30000 plots = all DIC seed = 204;
 		betarace 0 betasmoke 0 betamarij 0 betaincmed 0 betainchigh 0
 		betaeduc 0;
 	PARMS sigma2 1;
-	PRIOR betaint betaAP betadrugs betaage betabmi betaadh betarace
+	PRIOR betaAP betadrugs betaage betabmi betaadh betarace
 		betasmoke betamarij betaincmed betainchigh betaeduc ~ normal(mean = 0, var = 1000);
+	PRIOR betaint ~ normal(mean = 0, var = 10000);
 	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
 	mu = betaint + betaAP*AGG_PHYS + betadrugs*harddrugsY + betaage*age +
 		betabmi*BMI + betaadh*adhhigh + betarace*raceNHW + 
@@ -85,8 +88,9 @@ PROC MCMC data = hiv nbi = 2500 nmc = 30000 plots = all DIC seed = 204;
 		betarace 0 betadrink 0 betamarij 0 betaincmed 0 betainchigh 0
 		betaeduc 0;
 	PARMS sigma2 1;
-	PRIOR betaint betaAP betadrugs betaage betabmi betaadh betarace
+	PRIOR betaAP betadrugs betaage betabmi betaadh betarace
 		betadrink betamarij betaincmed betainchigh betaeduc ~ normal(mean = 0, var = 1000);
+	PRIOR betaint ~ normal(mean = 0, var = 10000);
 	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
 	mu = betaint + betaAP*AGG_PHYS + betadrugs*harddrugsY + betaage*age +
 		betabmi*BMI + betaadh*adhhigh + betarace*raceNHW + betadrink*drink13plus +
@@ -106,8 +110,9 @@ PROC MCMC data = hiv nbi = 2500 nmc = 30000 plots = all DIC seed = 204;
 		betarace 0 betadrink 0 betasmoke 0 betaincmed 0 betainchigh 0
 		betaeduc 0;
 	PARMS sigma2 1;
-	PRIOR betaint betaAP betadrugs betaage betabmi betaadh betarace
+	PRIOR betaAP betadrugs betaage betabmi betaadh betarace
 		betadrink betasmoke betaincmed betainchigh betaeduc ~ normal(mean = 0, var = 1000);
+	PRIOR betaint ~ normal(mean = 0, var = 10000);
 	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
 	mu = betaint + betaAP*AGG_PHYS + betadrugs*harddrugsY + betaage*age +
 		betabmi*BMI + betaadh*adhhigh + betarace*raceNHW + betadrink*drink13plus +
@@ -127,8 +132,9 @@ PROC MCMC data = hiv nbi = 2500 nmc = 30000 plots = all DIC seed = 204;
 		betarace 0 betadrink 0 betasmoke 0 betamarij 0 
 		betaeduc 0;
 	PARMS sigma2 1;
-	PRIOR betaint betaAP betadrugs betaage betabmi betaadh betarace
+	PRIOR betaAP betadrugs betaage betabmi betaadh betarace
 		betadrink betasmoke betamarij betaeduc ~ normal(mean = 0, var = 1000);
+	PRIOR betaint ~ normal(mean = 0, var = 10000);
 	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
 	mu = betaint + betaAP*AGG_PHYS + betadrugs*harddrugsY + betaage*age +
 		betabmi*BMI + betaadh*adhhigh + betarace*raceNHW + betadrink*drink13plus +
@@ -147,8 +153,9 @@ PROC MCMC data = hiv nbi = 2500 nmc = 30000 plots = all DIC seed = 204;
 	PARMS betaint 0 betaAP 0 betadrugs 0 betaage 0 betabmi 0 betaadh 0
 		betarace 0 betadrink 0 betasmoke 0 betamarij 0 betaincmed 0 betainchigh 0;
 	PARMS sigma2 1;
-	PRIOR betaint betaAP betadrugs betaage betabmi betaadh betarace
+	PRIOR betaAP betadrugs betaage betabmi betaadh betarace
 		betadrink betasmoke betamarij betaincmed betainchigh ~ normal(mean = 0, var = 1000);
+	PRIOR betaint ~ normal(mean = 0, var = 10000);
 	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
 	mu = betaint + betaAP*AGG_PHYS + betadrugs*harddrugsY + betaage*age +
 		betabmi*BMI + betaadh*adhhigh + betarace*raceNHW + betadrink*drink13plus +
@@ -167,8 +174,9 @@ PROC MCMC data = hiv nbi = 2500 nmc = 30000 plots = all DIC seed = 204;
 	PARMS betaint 0 betaAP 0 betadrugs 0 betaage 0 betabmi 0 betaadh 0
 		betarace 0 betaincmed 0 betainchigh 0;
 	PARMS sigma2 1;
-	PRIOR betaint betaAP betadrugs betaage betabmi betaadh betarace
+	PRIOR betaAP betadrugs betaage betabmi betaadh betarace
 		betaincmed betainchigh ~ normal(mean = 0, var = 1000);
+	PRIOR betaint ~ normal(mean = 0, var = 10000);
 	PRIOR sigma2 ~ igamma(shape = 2.001, scale = 1.001);
 	mu = betaint + betaAP*AGG_PHYS + betadrugs*harddrugsY + betaage*age +
 		betabmi*BMI + betaadh*adhhigh + betarace*raceNHW + betaincmed*incomemed + betainchigh*incomehigh;
