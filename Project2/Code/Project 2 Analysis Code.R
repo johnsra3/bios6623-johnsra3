@@ -227,3 +227,22 @@ tab[17, 2] <- paste(nrow(tabdata[tabdata$death30 == 1 & is.na(tabdata$asa) == F,
 #DON'T WRITE UNTIL ISSUES ARE FIGURED OUT WITH BMI!!
 # setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
 # write.csv(tab, "TableOverallCharacteristics.csv")
+
+
+#==========================================================#
+# Make table 2- death rate by hospital last 6 mo
+#==========================================================#
+
+tab2 <- matrix(data = NA, nrow = length(unique(rec$hospcode)), ncol = 4)
+colnames(tab2) <- c("Hospital", "Patients died", "Patients in surgery", "Percent died")
+
+rec <- rec[order(rec$hospcode), c(which(colnames(rec) == "hospcode"),
+                                  which(colnames(rec) == "death30"))]
+tab2[1:44, 1] <- unique(rec$hospcode)
+tab2[1:44, 2] <- aggregate(rec$death30, list(rec$hospcode), sum)[, 2]
+tab2[1:44, 3] <- aggregate(rec$death30, list(rec$hospcode), length)[, 2]
+tab2[1:44, 4] <- round(tab2[, 2]/tab2[, 3] * 100, 2)
+
+# setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
+# write.csv(tab2, "TableDeathsByHospital.csv")
+
