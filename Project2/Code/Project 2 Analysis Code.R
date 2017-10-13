@@ -43,11 +43,28 @@ lowbmi$bmi_calc <- lowbmi$weight_lbs/(lowbmi$height^2) * 703
 #Now this BMI seems reasonable
 #Still an issue w/ #2- I think need to ask investigators...
 
+(lowbmi_row2 <- vadata[vadata$weight > 30 & vadata$weight < 33 & is.na(vadata$weight) == F, ])
+
 (highbmi <- vadata[vadata$bmi > 50 & is.na(vadata$bmi) == F, ])
 #Looks like BMI calculation error
 (highbmi$bmi_calc <- highbmi$weight/(highbmi$height^2) * 703)
 #These seem reasonable now! :)  
 
+#Remove bad BMI, then fix and rebind vadata, lowbmi, lowbmi_row4, lowbmi_row2, highbmi
+vadata <- vadata[vadata$bmi > 15 & vadata$bmi < 50, ]
+#
+lowbmi$bmi <- lowbmi$bmi_calc
+lowbmi$weight <- lowbmi$weight_lbs
+lowbmi <- lowbmi[, -c(which(colnames(lowbmi) == "bmi_calc"),
+                      which(colnames(lowbmi) == "weight_lbs"))]
+#
+lowbmi_row4$bmi <- lowbmi_row4$bmi_calc
+lowbmi_row4 <- lowbmi_row4[, -which(colnames(lowbmi_row4) == "bmi_calc")]
+
+# (lowbmi_row2)
+
+#
+highbmi$bmi <- highbmi$bmi_calc
 
 
 #==========================================================#
