@@ -14,11 +14,40 @@ vadata <- read_sas("~/School/AdvancedData/vadata2.sas7bdat")
 
 
 #==========================================================#
-# Divide into different data sets 
+# Divide into different data sets (will use later)
 #==========================================================#
 
 rec <- vadata[vadata$sixmonth == 39, ]
 old <- vadata[vadata$sixmonth != 39, ]
+
+
+#==========================================================#
+# Fix issues in data (ex: impossible BMI values)
+#==========================================================#
+
+#remove ones w/ proced = 2
+vadata <- vadata[-which(vadata$proced == 2), ]
+
+#bmi- look at unusually high/low vals
+(lowbmi <- vadata[vadata$bmi < 15 & is.na(vadata$bmi) == F, ])
+#Row 1, 3, 5, 6, 7, 8 look like weight is in kg (not lbs)
+  #Row 4 looks like BMI calculation issue
+  #Row 2 is ???
+(lowbmi <- lowbmi[-c(2, 4), ])
+lowbmi$weight_lbs <- lowbmi$weight * 2.2
+lowbmi$bmi_calc <- lowbmi$weight_lbs/(lowbmi$height^2) * 703
+#BMI and weight in lbs all seem reasonable now for these
+
+(lowbmi_row4 <- vadata[vadata$bmi < 3 & is.na(vadata$bmi) == F, ])
+(lowbmi_row4$bmi_calc <- lowbmi_row4$weight/(lowbmi_row4$height^2) * 703)
+#Now this BMI seems reasonable
+#Still an issue w/ #2- I think need to ask investigators...
+
+(highbmi <- vadata[vadata$bmi > 50 & is.na(vadata$bmi) == F, ])
+#Looks like BMI calculation error
+(highbmi$bmi_calc <- highbmi$weight/(highbmi$height^2) * 703)
+#These seem reasonable now! :)  
+
 
 
 #==========================================================#
@@ -40,8 +69,6 @@ length(unique(vadata$sixmonth))
 
 #Proced
 table(vadata$proced)
-#remove ones w/ proced = 2
-vadata <- vadata[-which(vadata$proced == 2), ]
 
 #ASA
 table(vadata$asa)
@@ -59,13 +86,6 @@ hist(vadata$height)
 summary(vadata$bmi)
 #some unusually high or low BMIs... y*kes
 hist(vadata$bmi)
-
-lowbmi <- vadata[vadata$bmi < 15 & is.na(vadata$bmi) == F, ]
-#very low weights led to this-- "data entry issues" for weight for all but one, wh/
-  #looks like a data entry error for bmi
-highbmi <- vadata[vadata$bmi > 50 & is.na(vadata$bmi) == F, ]
-#high bmi seem to be data entry issues
-#Need to check w/ investigator on these values
 
 
 #Albumin
