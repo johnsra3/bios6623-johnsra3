@@ -30,27 +30,20 @@ vadata <- vadata[-which(vadata$proced == 2), ]
 
 #bmi- look at unusually high/low vals
 (lowbmi <- vadata[vadata$bmi < 15 & is.na(vadata$bmi) == F, ])
-#Row 1, 3, 5, 6, 7, 8 look like weight is in kg (not lbs)
+#Row 1, 2, 3, 5, 6, 7, 8 look like weight is in kg (not lbs)
   #Row 4 looks like BMI calculation issue
-  #Row 2 is ???
-(lowbmi <- lowbmi[-c(2, 4), ])
+(lowbmi <- lowbmi[-4, ])
 lowbmi$weight_lbs <- lowbmi$weight * 2.2
 lowbmi$bmi_calc <- lowbmi$weight_lbs/(lowbmi$height^2) * 703
-#BMI and weight in lbs all seem reasonable now for these
 
 (lowbmi_row4 <- vadata[vadata$bmi < 3 & is.na(vadata$bmi) == F, ])
 (lowbmi_row4$bmi_calc <- lowbmi_row4$weight/(lowbmi_row4$height^2) * 703)
-#Now this BMI seems reasonable
-#Still an issue w/ #2- I think need to ask investigators...
-
-(lowbmi_row2 <- vadata[vadata$weight > 30 & vadata$weight < 33 & is.na(vadata$weight) == F, ])
 
 (highbmi <- vadata[vadata$bmi > 50 & is.na(vadata$bmi) == F, ])
 #Looks like BMI calculation error
 (highbmi$bmi_calc <- highbmi$weight/(highbmi$height^2) * 703)
-#These seem reasonable now! :)  
 
-#Remove bad BMI, then fix and rebind vadata, lowbmi, lowbmi_row4, lowbmi_row2, highbmi
+#Remove bad BMI, then fix and rebind vadata, lowbmi, lowbmi_row4, highbmi
 vadata <- vadata[vadata$bmi > 15 & vadata$bmi < 50, ]
 #
 lowbmi$bmi <- lowbmi$bmi_calc
@@ -60,11 +53,11 @@ lowbmi <- lowbmi[, -c(which(colnames(lowbmi) == "bmi_calc"),
 #
 lowbmi_row4$bmi <- lowbmi_row4$bmi_calc
 lowbmi_row4 <- lowbmi_row4[, -which(colnames(lowbmi_row4) == "bmi_calc")]
-
-# (lowbmi_row2)
-
 #
 highbmi$bmi <- highbmi$bmi_calc
+highbmi <- highbmi[, -which(colnames(highbmi) == "bmi_calc")]
+
+vadata <- rbind.data.frame(vadata, lowbmi, lowbmi_row4, highbmi)
 
 
 #==========================================================#
@@ -223,8 +216,7 @@ tab[16, 2] <- paste(nrow(tabdata[is.na(tabdata$albumin) == T, ]), paste("(",
 tab[17, 1] <- "30 day mortality (n (%))"
 tab[17, 2] <- paste(nrow(tabdata[tabdata$death30 == 1 & is.na(tabdata$asa) == F, ]), paste("(",
                     round(nrow(tabdata[tabdata$death30 == 1 & is.na(tabdata$asa) == F, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
-
-#DON'T WRITE UNTIL ISSUES ARE FIGURED OUT WITH BMI!!
+ 
 # setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
 # write.csv(tab, "TableOverallCharacteristics.csv")
 
@@ -243,6 +235,6 @@ tab2[1:44, 2] <- aggregate(rec$death30, list(rec$hospcode), sum)[, 2]
 tab2[1:44, 3] <- aggregate(rec$death30, list(rec$hospcode), length)[, 2]
 tab2[1:44, 4] <- round(tab2[, 2]/tab2[, 3] * 100, 2)
 
-# setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
+# setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
 # write.csv(tab2, "TableDeathsByHospital.csv")
 
