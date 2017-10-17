@@ -142,11 +142,10 @@ length(vadata$death30[vadata$death30 == 1])/nrow(vadata) * 100
 
 
 #==========================================================#
-# Look at missing data for ALBUMIN (primary case)
+# Look at missing data for ALBUMIN (primary issue)
 #==========================================================#
 # Don't need height and weight in analysis
 #==========================================================#
-
 
 #Look at covariates between missing and non-missing for ALBUMIN
 alb_miss <- vadata[is.na(vadata$albumin) == T, ]
@@ -168,8 +167,8 @@ summary(alb_miss$bmi) #some v. v. low measures, but are correct
 summary(alb_pres$bmi) #some v. v. low measures, but are correct
 #very similar
 
-summary(alb_miss$death30)
-summary(alb_pres$death30)
+table(alb_miss$death30)
+table(alb_pres$death30)
 #very similar
 
 
