@@ -22,46 +22,76 @@ old <- vadata[vadata$sixmonth != 39, ]
 
 
 #==========================================================#
-# Fix issues in data (ex: impossible BMI values)
+# Look at BMI issues in most recent period
 #==========================================================#
 
-#remove ones w/ proced = 2
-vadata <- vadata[-which(vadata$proced == 2), ]
+plot((rec$weight)/(rec$height^2) * 703, rec$bmi)
+abline(1, 1)
 
-#bmi- look at unusually high/low vals
-(lowbmi <- vadata[vadata$bmi < 15 & is.na(vadata$bmi) == F, ])
-#Row 1, 2, 3, 5, 6, 7, 8 look like weight is in kg (not lbs)
-  #Row 4 looks like BMI calculation issue
-(lowbmi <- lowbmi[-4, ])
-lowbmi$weight_lbs <- lowbmi$weight * 2.2
-lowbmi$bmi_calc <- lowbmi$weight_lbs/(lowbmi$height^2) * 703
+hosp1_5 <- rec[rec$hospcode >= 1 & rec$hospcode < 6, ]
+plot((hosp1_5$weight)/(hosp1_5$height^2) * 703, hosp1_5$bmi)
+abline(1, 1)
+#All 5 of these hosp code BMIs are wrong (1 extraneous)
 
-(lowbmi_row4 <- vadata[vadata$bmi < 3 & is.na(vadata$bmi) == F, ])
-(lowbmi_row4$bmi_calc <- lowbmi_row4$weight/(lowbmi_row4$height^2) * 703)
+hosp6_10 <- rec[rec$hospcode > 5 & rec$hospcode < 11, ]
+plot((hosp6_10$weight)/(hosp6_10$height^2) * 703, hosp6_10$bmi)
+abline(1, 1)
+#All 5 of these hosp code BMIs are wrong (0 extraneous)
 
-(highbmi <- vadata[vadata$bmi > 50 & is.na(vadata$bmi) == F, ])
-#Looks like BMI calculation error
-(highbmi$bmi_calc <- highbmi$weight/(highbmi$height^2) * 703)
+hosp11_15 <- rec[rec$hospcode > 10 & rec$hospcode < 16, ]
+plot((hosp11_15$weight)/(hosp11_15$height^2) * 703, hosp11_15$bmi)
+abline(1, 1)
+#All 5 of these hosp code BMIs are wrong (0 extraneous)
 
-#Remove bad BMI, then fix and rebind vadata, lowbmi, lowbmi_row4, highbmi
-vadata <- vadata[vadata$bmi > 15 & vadata$bmi < 50, ]
-#
-lowbmi$bmi <- lowbmi$bmi_calc
-lowbmi$weight <- lowbmi$weight_lbs
-lowbmi <- lowbmi[, -c(which(colnames(lowbmi) == "bmi_calc"),
-                      which(colnames(lowbmi) == "weight_lbs"))]
-#
-lowbmi_row4$bmi <- lowbmi_row4$bmi_calc
-lowbmi_row4 <- lowbmi_row4[, -which(colnames(lowbmi_row4) == "bmi_calc")]
-#
-highbmi$bmi <- highbmi$bmi_calc
-highbmi <- highbmi[, -which(colnames(highbmi) == "bmi_calc")]
-
-vadata <- rbind.data.frame(vadata, lowbmi, lowbmi_row4, highbmi)
+hosp16 <- rec[rec$hospcode == 16, ]
+plot((hosp16$weight)/(hosp16$height^2) * 703, hosp16$bmi)
+abline(1, 1)
+#Wrong BMI still :(
 
 
 #==========================================================#
-# Explore data
+# Fix BMI calculation issues
+#==========================================================#
+
+bmifix <- rec[rec$hospcode <= 16, ] 
+#All issues w/ weight and not height
+bmifix$weight <- bmifix$weight * 2.2
+bmifix$bmi <- bmifix$weight/(bmifix$height^2) * 703
+plot((bmifix$weight)/(bmifix$height^2) * 703, bmifix$bmi)
+#One BMI is too low
+
+#Hospital codes 17-44
+hosp17plus <- rec[rec$hospcode > 16, ]
+plot((hosp17plus$weight)/(hosp17plus$height^2) * 703, hosp17plus$bmi)
+abline(1, 1)
+#All okay for calculation, 4 extraneous need to be fixed
+
+hosp17plus$bmi_check <- (hosp17plus$weight)/(hosp17plus$height^2) * 703
+hosp17plus$diff <- round(hosp17plus$bmi - hosp17plus$bmi_check, 3)
+plot(hosp17plus$bmi, hosp17plus$bmi_check)
+diffs <- hosp17plus[hosp17plus$diff != 0 & is.na(hosp17plus$diff) == F, ]
+hosp17plus$bmi <- hosp17plus$bmi_check
+hosp17plus <- hosp17plus[, -c(which(colnames(hosp17plus) == "bmi_check"),
+                              which(colnames(hosp17plus) == "diff"))]
+
+#Re-bind hospital code divided data
+rec_new <- rbind.data.frame(bmifix, hosp17plus)
+plot((rec_new$weight)/(rec_new$height^2) * 703, rec_new$bmi)
+abline(1, 1)
+#All good now!
+
+#Re-bind old and new data
+vadata <- rbind.data.frame(rec_new, old)
+
+
+#==========================================================#
+# Fix proced data
+#==========================================================#
+
+vadata$proced[vadata$proced == 2] <- NA
+
+#==========================================================#
+# Explore other data
 #==========================================================#
 
 names(vadata)
@@ -85,7 +115,6 @@ table(vadata$asa)
 
 #Weight- won't model, but look at numbers
 summary(vadata$weight)
-#some unusually low weights
 hist(vadata$weight)
 
 #Height
@@ -94,7 +123,6 @@ hist(vadata$height)
 
 #BMI
 summary(vadata$bmi)
-#some unusually high or low BMIs... y*kes
 hist(vadata$bmi)
 
 
@@ -104,7 +132,7 @@ summary(vadata$albumin)
 #Normal range is 3.4-5.4; look at relationship w/ asa and unusually low or high vals?
 
 plot(vadata$asa, vadata$albumin)
-#Should be okay, lowest albumin meas. are w/ sickets people
+#Should be okay, lowest albumin meas. are w/ sickest people
 
 #Death30
 table(vadata$death30)
@@ -136,14 +164,13 @@ table(alb_miss$asa)
 table(alb_pres$asa)
 #very similar
 
-summary(alb_miss$bmi) #some impossible measures! need to fix!
-summary(alb_pres$bmi) #some impossible measures! need to fix!
+summary(alb_miss$bmi) #some v. v. low measures, but are correct
+summary(alb_pres$bmi) #some v. v. low measures, but are correct
 #very similar
 
 summary(alb_miss$death30)
 summary(alb_pres$death30)
 #very similar
-
 
 
 
@@ -217,7 +244,7 @@ tab[17, 1] <- "30 day mortality (n (%))"
 tab[17, 2] <- paste(nrow(tabdata[tabdata$death30 == 1 & is.na(tabdata$asa) == F, ]), paste("(",
                     round(nrow(tabdata[tabdata$death30 == 1 & is.na(tabdata$asa) == F, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
  
-# setwd("C:/Repositories/bios6623-johnsra3/Project1/Reports")
+# setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
 # write.csv(tab, "TableOverallCharacteristics.csv")
 
 
