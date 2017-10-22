@@ -8,6 +8,7 @@
 #==========================================================#
 
 library(haven)
+library(boot)
 
 setwd("~/School/AdvancedData")
 vadata <- read_sas("~/School/AdvancedData/vadata2.sas7bdat")
@@ -88,7 +89,8 @@ vadata <- rbind.data.frame(rec_new, old)
 # Fix proced data
 #==========================================================#
 
-vadata$proced[vadata$proced == 2] <- NA
+proc2 <- which(vadata$proced == 2)
+vadata <- vadata[-proc2, ]
 
 #==========================================================#
 # Explore other data
@@ -172,20 +174,6 @@ table(alb_pres$death30)
 #very similar
 
 
-
-#Is anyone else going to look at other missing data?
-
-#==========================================================#
-# Look at missing data for PROCED (only missing 549)
-#==========================================================#
-#==========================================================#
-# Look at missing data for ASA (only missing 664)
-#==========================================================#
-#==========================================================#
-# Look at missing data for BMI (only missing 702)
-#==========================================================#
-
-
 #==========================================================#
 # Make general table 1 (no stratifications)
 #==========================================================#
@@ -248,11 +236,54 @@ tab[17, 2] <- paste(nrow(tabdata[tabdata$death30 == 1 & is.na(tabdata$asa) == F,
 
 
 #==========================================================#
-# Make table 2- death rate by hospital last 6 mo
+# Logistic regression 
 #==========================================================#
 
-tab2 <- matrix(data = NA, nrow = length(unique(rec$hospcode)), ncol = 4)
-colnames(tab2) <- c("Hospital", "Patients died", "Patients in surgery", "Percent died")
+#With albumin
+model1 <- glm(death30 ~ proced + asa + bmi + albumin, data = vadata,
+              family = binomial(link = "logit"))
+summary(model1)
+
+#Without albumin
+model2 <- glm(death30 ~ proced + asa + bmi, data = vadata,
+              family = binomial(link = "logit"))
+summary(model2)
+
+#Decisions do not change-- will ask if albumin can be excluded 
+
+
+#==========================================================#
+# Predicted values to individuals' odds to indivs' pred p
+#==========================================================#
+
+#Need a complete case data for BMI, procedure, ASA
+#******currently assuming no albumin incl, but may change
+comp <- vadata[, c(which(colnames(vadata) == "hospcode"),
+                   which(colnames(vadata) == "proced"),
+                   which(colnames(vadata) == "asa"),
+                   which(colnames(vadata) == "bmi"))]
+comp <- comp[complete.cases(comp), ]
+
+#Extract fitted values from summary of model2
+(pred_proced <- summary(model2)$coefficients[2, 1])
+(pred_asa <- summary(model2)$coefficients[3, 1])
+(pred_bmi <- summary(model2)$coefficients[4, 1])
+(int <- summary(model2)$coefficients[1, 1])
+
+#Create XB column in comp
+comp$XB <- int + pred_proced*comp$proced + pred_asa*comp$asa + pred_bmi*comp$bmi
+
+#Create predicted p column in comp
+comp$pred_p <- inv.logit(comp$XB)
+
+
+#==========================================================#
+# Create table 2 w/ hospital death rates
+#==========================================================#
+
+tab2 <- matrix(data = NA, nrow = length(unique(rec$hospcode)), ncol = 5)
+colnames(tab2) <- c("Hospital", "Patients died", "Patients in surgery", "Percent died",
+                    "Predicted percent died (population-adjusted)")
 
 rec <- rec[order(rec$hospcode), c(which(colnames(rec) == "hospcode"),
                                   which(colnames(rec) == "death30"))]
@@ -260,7 +291,7 @@ tab2[1:44, 1] <- unique(rec$hospcode)
 tab2[1:44, 2] <- aggregate(rec$death30, list(rec$hospcode), sum)[, 2]
 tab2[1:44, 3] <- aggregate(rec$death30, list(rec$hospcode), length)[, 2]
 tab2[1:44, 4] <- round(tab2[, 2]/tab2[, 3] * 100, 2)
+tab2[1:44, 5] <- aggregate(comp$pred_p, list(comp$hospcode), mean)[, 2] * 100
 
-# setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
-# write.csv(tab2, "TableDeathsByHospital.csv")
-
+setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
+write.csv(tab2, "TableDeathsByHospital.csv")
