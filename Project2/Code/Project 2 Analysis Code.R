@@ -231,8 +231,8 @@ tab[17, 1] <- "30 day mortality (n (%))"
 tab[17, 2] <- paste(nrow(tabdata[tabdata$death30 == 1 & is.na(tabdata$asa) == F, ]), paste("(",
                     round(nrow(tabdata[tabdata$death30 == 1 & is.na(tabdata$asa) == F, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
  
-# setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
-# write.csv(tab, "TableOverallCharacteristics.csv")
+ # setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
+ # write.csv(tab, "TableOverallCharacteristics.csv")
 
 
 #==========================================================#
@@ -249,26 +249,25 @@ model2 <- glm(death30 ~ proced + asa + bmi, data = vadata,
               family = binomial(link = "logit"))
 summary(model2)
 
-#Decisions do not change-- will ask if albumin can be excluded 
-
+#Decisions do not change-- albumin can be excluded, but still report results
 
 #==========================================================#
 # Predicted values to individuals' odds to indivs' pred p
 #==========================================================#
 
 #Need a complete case data for BMI, procedure, ASA
-#******currently assuming no albumin incl, but may change
 comp <- vadata[, c(which(colnames(vadata) == "hospcode"),
                    which(colnames(vadata) == "proced"),
                    which(colnames(vadata) == "asa"),
-                   which(colnames(vadata) == "bmi"))]
+                   which(colnames(vadata) == "bmi"),
+                   which(colnames(vadata) == "death30"))]
 comp <- comp[complete.cases(comp), ]
 
 #Extract fitted values from summary of model2
+(int <- summary(model2)$coefficients[1, 1])
 (pred_proced <- summary(model2)$coefficients[2, 1])
 (pred_asa <- summary(model2)$coefficients[3, 1])
 (pred_bmi <- summary(model2)$coefficients[4, 1])
-(int <- summary(model2)$coefficients[1, 1])
 
 #Create XB column in comp
 comp$XB <- int + pred_proced*comp$proced + pred_asa*comp$asa + pred_bmi*comp$bmi
@@ -293,5 +292,64 @@ tab2[1:44, 3] <- aggregate(rec$death30, list(rec$hospcode), length)[, 2]
 tab2[1:44, 4] <- round(tab2[, 2]/tab2[, 3] * 100, 2)
 tab2[1:44, 5] <- aggregate(comp$pred_p, list(comp$hospcode), mean)[, 2] * 100
 
-setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
-write.csv(tab2, "TableDeathsByHospital.csv")
+# setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
+# write.csv(tab2, "TableDeathsByHospital.csv")
+
+
+#==========================================================#
+# Write function to use in bootstrap
+#==========================================================#
+
+#Need following steps:
+  # 1. Sample from w/i total population w/ replacement in complete cases
+  # 2. Run logistic regression w/ this resampled population
+  # 3. Extract fitted values and exponentiate them 
+  # 4. Calculate p_fitted for each individual in the resampled data set w/ inv.logit
+  # 5. Get an average p_fitted for each hospital w/ aggregate
+  # 6. Find distribution of p_fitted for each hosp, w/ 2.5% and 97.5% pieces (boot.ci)
+
+#Place to store p_fits
+num_iter <- 100
+boot.stats <- matrix(data = NA, ncol = length(unique(comp$hospcode)), nrow = num_iter)
+colnames(boot.stats) <- unique(comp$hospcode)
+
+for(i in 1:num_iter){ 
+  #Sample from complete cases with replacement
+  boot.samps <- sample(nrow(comp), replace = T)
+  boot.dat <- comp[boot.samps, ]
+  
+  #Run the logistic regression
+  boot.model <- glm(death30 ~ proced + asa + bmi, data = boot.dat, family = binomial(link = "logit"))
+  
+  #Extract coefficients
+  int <- summary(model2)$coefficients[1, 1]
+  pred_proced <- summary(model2)$coefficients[2, 1]
+  pred_asa <- summary(model2)$coefficients[3, 1]
+  pred_bmi <- summary(model2)$coefficients[4, 1]
+
+  #Find fitted values
+  boot.dat$xb <- int + pred_proced*boot.dat$proced + pred_asa*boot.dat$asa + pred_bmi*boot.dat$bmi
+
+  #Find predicted p from XB
+  boot.dat$pfit <- inv.logit(boot.dat$xb)
+  
+  #Find average p by hospital
+  boot.stats[i, ] <- aggregate(boot.dat$pfit, list(boot.dat$hospcode), mean)[, 2] * 100
+
+  print(i)
+
+}
+
+
+
+#######################
+# boot.dat$ci_lower <- NA
+# boot.dat$ci_upper <- NA
+# 
+# for(j in 1:length(unique(comp$hospcode))){
+#   boot.dat
+# }
+# 
+# 
+
+# http://www.r-tutor.com/elementary-statistics/numerical-measures/percentile
