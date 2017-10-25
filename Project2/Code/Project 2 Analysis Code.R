@@ -265,16 +265,22 @@ tab2[1:44, 3] <- aggregate(rec$death30, list(rec$hospcode), length)[, 2]
 tab2[1:44, 4] <- round(tab2[, 2]/tab2[, 3] * 100, 2)
 
 #Note: hospital 30 does not have any data for last period, so it will not be estimated for last pd.
-hosp1_29 <- unique(comp_rec$hospcode)[1:29]
-tab2[1:29, 5] <- aggregate(comp_rec$pred_p, list(hosp1_29), mean)[, 2] * 100
-#come back to this and only get pred_p for 1st 29 hosp, then fill in rest w/ hosps 31-44 :)
+hosp1_29 <- as.list(unique(comp_rec$hospcode)[1:29])
+p1_29 <- as.data.frame(comp_rec[comp_rec$hospcode %in% hosp1_29, c(which(colnames(comp_rec) == "pred_p"),
+                                                                   which(colnames(comp_rec) == "hospcode"))])
+tab2[1:29, 5] <- round(aggregate(p1_29$pred_p, list(p1_29$hospcode), mean)[, 2] * 100, 2)
+
+hosp31_44 <- seq(from = 31, to = 44, by = 1)
+p31_44 <- as.data.frame(comp_rec[comp_rec$hospcode %in% hosp31_44, c(which(colnames(comp_rec) == "pred_p"),
+                                                                     which(colnames(comp_rec) == "hospcode"))])
+tab2[31:44, 5] <- round(aggregate(p31_44$pred_p, list(p31_44$hospcode), mean)[, 2] * 100, 2)
 
 # setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
 # write.csv(tab2, "TableDeathsByHospital.csv")
 
 
 #==========================================================#
-# Write function to use in bootstrap
+# Write loop to bootstrap
 #==========================================================#
 
 #Need following steps:
@@ -288,45 +294,26 @@ tab2[1:29, 5] <- aggregate(comp_rec$pred_p, list(hosp1_29), mean)[, 2] * 100
 #Place to store p_fits
 num_iter <- 100
 boot.stats <- matrix(data = NA, ncol = length(unique(comp$hospcode)), nrow = num_iter)
+fitold <- matrix(data = NA, ncol = nrow(comp_rec), nrow = num_iter)
 colnames(boot.stats) <- unique(comp$hospcode)
 
 for(i in 1:num_iter){ 
-  #Sample from complete cases with replacement
+  
   boot.samps <- sample(nrow(comp), replace = T)
   boot.dat <- comp[boot.samps, ]
+  boot.model <- glm(death30 ~ proced + asa_indic + bmi, data = boot.dat, family = binomial(link = "logit"))
+  coeff <- summary(boot.model)$coefficients
   
-  #Run the logistic regression
-  boot.model <- glm(death30 ~ proced + asa + bmi, data = boot.dat, family = binomial(link = "logit"))
+  fitold$xb <- coeff[1] + coeff[2]*comp_rec$proced + coeff[3]*comp_rec$asa_indic + coeff[4]*comp_rec$bmi
+  fitold$pfit <- inv.logit(fitold$xb)
   
-  #Extract coefficients
-  int <- summary(model2)$coefficients[1, 1]
-  pred_proced <- summary(model2)$coefficients[2, 1]
-  pred_asa <- summary(model2)$coefficients[3, 1]
-  pred_bmi <- summary(model2)$coefficients[4, 1]
-
-  #Find fitted values
-  boot.dat$xb <- int + pred_proced*boot.dat$proced + pred_asa*boot.dat$asa + pred_bmi*boot.dat$bmi
-
-  #Find predicted p from XB
-  boot.dat$pfit <- inv.logit(boot.dat$xb)
+  boot.stats[i, ] <- round(aggregate(p_below30$pred_p, list(p_below30$hospcode), mean)[, 2] * 100, 2)
   
-  #Find average p by hospital
-  boot.stats[i, ] <- aggregate(boot.dat$pfit, list(boot.dat$hospcode), mean)[, 2] * 100
-
   print(i)
 
 }
 
 
 
-#######################
-# boot.dat$ci_lower <- NA
-# boot.dat$ci_upper <- NA
-# 
-# for(j in 1:length(unique(comp$hospcode))){
-#   boot.dat
-# }
-# 
-# 
 
 # http://www.r-tutor.com/elementary-statistics/numerical-measures/percentile
