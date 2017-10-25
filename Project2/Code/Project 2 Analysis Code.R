@@ -15,6 +15,14 @@ vadata <- read_sas("~/School/AdvancedData/vadata2.sas7bdat")
 
 
 #==========================================================#
+# 10/24: import raw bootstrap results
+#==========================================================#
+
+setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
+boot.res <- read.csv("BootstrapResults_raw.csv", header = T)
+boot.res <- boot.res[, -1]
+
+#==========================================================#
 # Divide into different data sets (will use later)
 #==========================================================#
 
@@ -283,7 +291,7 @@ tab2[31:44, 5] <- round(aggregate(p31_44$pred_p, list(p31_44$hospcode), mean)[, 
 # Write loop to bootstrap
 #==========================================================#
 
-#Need following steps:
+#Need following steps (1-5 in loop, 6 separate):
   # 1. Sample from w/i total population w/ replacement in complete cases
   # 2. Run logistic regression w/ this resampled population
   # 3. Extract fitted values and exponentiate them 
@@ -318,7 +326,15 @@ for(i in 1:num_iter){
 
 }
 
-setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
-write.csv(boot.stats, "BootstrapResults_raw.csv")
+# setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
+# write.csv(boot.stats, "BootstrapResults_raw.csv")
+boot.means <- round(apply(boot.res, 2, mean), 2)
+boot.ci_low <- round(apply(boot.res, 2, quantile, probs = 0.025), 2)
+boot.ci_high <- round(apply(boot.res, 2, quantile, probs = 0.975), 2)
+boot.ci <- paste(paste(boot.ci_low, ",", sep = ""), boot.ci_high)
+hosps <- c(seq(from = 1, to = 29, by = 1), seq(from = 31, to = 44, by = 1)) 
 
-# http://www.r-tutor.com/elementary-statistics/numerical-measures/percentile
+boottab <- cbind.data.frame(hosps, boot.means, boot.ci)
+
+#need to put together w/ other table (figure out missing hosp issue before merging)
+
