@@ -292,10 +292,11 @@ tab2[31:44, 5] <- round(aggregate(p31_44$pred_p, list(p31_44$hospcode), mean)[, 
   # 6. Find distribution of p_fitted for each hosp, w/ 2.5% and 97.5% pieces (boot.ci)
 
 #Place to store p_fits
-num_iter <- 100
-boot.stats <- matrix(data = NA, ncol = length(unique(comp$hospcode)), nrow = num_iter)
-fitold <- matrix(data = NA, ncol = nrow(comp_rec), nrow = num_iter)
-colnames(boot.stats) <- unique(comp$hospcode)
+set.seed(9271024)
+num_iter <- 10000
+boot.stats <- matrix(data = NA, ncol = 43, nrow = num_iter)
+colnames(boot.stats) <- c(seq(from = 1, to = 29, by = 1), seq(from = 31, to = 44, by = 1))
+
 
 for(i in 1:num_iter){ 
   
@@ -304,16 +305,20 @@ for(i in 1:num_iter){
   boot.model <- glm(death30 ~ proced + asa_indic + bmi, data = boot.dat, family = binomial(link = "logit"))
   coeff <- summary(boot.model)$coefficients
   
-  fitold$xb <- coeff[1] + coeff[2]*comp_rec$proced + coeff[3]*comp_rec$asa_indic + coeff[4]*comp_rec$bmi
-  fitold$pfit <- inv.logit(fitold$xb)
+  boot.fits <- boot.dat[boot.dat$sixmonth == 39, ]
+  boot.fits$xb <- NA
+  boot.fits$pfit <- NA
   
-  boot.stats[i, ] <- round(aggregate(p_below30$pred_p, list(p_below30$hospcode), mean)[, 2] * 100, 2)
+  boot.fits$xb <- coeff[1] + coeff[2]*boot.fits$proced + coeff[3]*boot.fits$asa_indic + coeff[4]*boot.fits$bmi
+  boot.fits$pfit <- inv.logit(boot.fits$xb)
+  
+  boot.stats[i, ] <- round(aggregate(boot.fits$pfit, list(boot.fits$hospcode), mean)[, 2] * 100, 2)
   
   print(i)
 
 }
 
-
-
+setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
+write.csv(boot.stats, "BootstrapResults_raw.csv")
 
 # http://www.r-tutor.com/elementary-statistics/numerical-measures/percentile
