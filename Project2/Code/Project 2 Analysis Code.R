@@ -51,7 +51,7 @@ abline(1, 1)
 
 
 #==========================================================#
-# Fix BMI calculation issues
+# Cleaning: fix BMI calculation issues
 #==========================================================#
 
 bmifix <- rec[rec$hospcode <= 16, ] 
@@ -86,67 +86,33 @@ vadata <- rbind.data.frame(rec_new, old)
 
 
 #==========================================================#
-# Fix proced data
+# Cleaning: remove proced = 2, 
 #==========================================================#
 
 proc2 <- which(vadata$proced == 2)
 vadata <- vadata[-proc2, ]
 
 #==========================================================#
-# Explore other data
+# Cleaning: collapse ASA categories
 #==========================================================#
 
-names(vadata)
-summary(vadata)
-#missing data: <2% missing in proced, asa, weight, height, BMI
-  #largest missing data issue: albumin (missing 13241, ~50%)
-
-#Hosp code
-table(vadata$hospcode)
-length(unique(vadata$hospcode))
-
-#Sixmonth
-table(vadata$sixmonth)
-length(unique(vadata$sixmonth))
-
-#Proced
-table(vadata$proced)
-
-#ASA
 table(vadata$asa)
+#some small categories--see if deaths in all groups
+table(vadata$death30, vadata$asa)
+#no deaths in asa=1; acc. to investigator, categ. 1/2/3 vs. 4/5
+#note: 664 are missing
 
-#Weight- won't model, but look at numbers
-summary(vadata$weight)
-hist(vadata$weight)
+#Create indicator variable
+vadata$asa_indic <- ifelse(vadata$asa >= 4 & is.na(vadata$asa) == F, 1, 0)
 
-#Height
-summary(vadata$height)
-hist(vadata$height)
-
-#BMI
-summary(vadata$bmi)
-hist(vadata$bmi)
-
-
-#Albumin
-hist(vadata$albumin)
-summary(vadata$albumin)
-#Normal range is 3.4-5.4; look at relationship w/ asa and unusually low or high vals?
-
-plot(vadata$asa, vadata$albumin)
-#Should be okay, lowest albumin meas. are w/ sickest people
-
-#Death30
-table(vadata$death30)
-length(vadata$death30[vadata$death30 == 1])/nrow(vadata) * 100
-#about 3.27% death rate  
-
+#Collapse categories
+vadata$asa <- ifelse(vadata$asa <= 3, "3 or less", vadata$asa)
+vadata$asa <- ifelse(vadata$asa >=4, "4 or greater", vadata$asa)
+vadata$asa <- factor(vadata$asa, levels = c("3 or less", "4 or greater"))
 
 
 #==========================================================#
-# Look at missing data for ALBUMIN (primary issue)
-#==========================================================#
-# Don't need height and weight in analysis
+# Look at missing data for ALBUMIN 
 #==========================================================#
 
 #Look at covariates between missing and non-missing for ALBUMIN
@@ -163,6 +129,14 @@ table(alb_pres$proced)
 
 table(alb_miss$asa)
 table(alb_pres$asa)
+#very similar
+
+summary(alb_miss$height)
+summary(alb_pres$height)
+#very similar
+
+summary(alb_miss$weight)
+summary(alb_pres$weight)
 #very similar
 
 summary(alb_miss$bmi) #some v. v. low measures, but are correct
@@ -183,7 +157,7 @@ tabdata <- tabdata[, -c(which(colnames(tabdata) == "weight"),
                        which(colnames(tabdata) == "height"),
                        which(colnames(tabdata) == "sixmonth"))]
 names(tabdata)
-rows <- 1 + 1 + 3 + 6 + 2 + 3 + 1
+rows <- 1 + 1 + 3 + 3 + 2 + 3 + 1
 tab <- matrix(data = NA, nrow = rows, ncol = 2)
 colnames(tab) <- c("", "")
 
@@ -201,34 +175,28 @@ tab[5, 2] <- paste(nrow(tabdata[tabdata$proced == 1, ]), paste("(",
                    round(nrow(tabdata[tabdata$proced == 1, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
 
 tab[6, 1] <- "ASA (n (%))"
-tab[7:12, 1] <- c("1 = good health", "2", "3", "4", "5 = near death", "Missing")
-tab[7, 2] <- paste(nrow(tabdata[tabdata$asa == 1 & is.na(tabdata$asa) == F, ]), paste("(",
-                  round(nrow(tabdata[tabdata$asa == 1 & is.na(tabdata$asa) == F, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
-tab[8, 2] <- paste(nrow(tabdata[tabdata$asa == 2 & is.na(tabdata$asa) == F, ]), paste("(",
-                  round(nrow(tabdata[tabdata$asa == 2 & is.na(tabdata$asa) == F, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
-tab[9, 2] <- paste(nrow(tabdata[tabdata$asa == 3 & is.na(tabdata$asa) == F, ]), paste("(",
-                  round(nrow(tabdata[tabdata$asa == 3 & is.na(tabdata$asa) == F, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
-tab[10, 2] <- paste(nrow(tabdata[tabdata$asa == 4 & is.na(tabdata$asa) == F, ]), paste("(",
-                  round(nrow(tabdata[tabdata$asa == 4 & is.na(tabdata$asa) == F, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
-tab[11, 2] <- paste(nrow(tabdata[tabdata$asa == 5 & is.na(tabdata$asa) == F, ]), paste("(",
-                  round(nrow(tabdata[tabdata$asa == 5 & is.na(tabdata$asa) == F, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
-tab[12, 2] <- paste(nrow(tabdata[is.na(tabdata$asa) == T, ]), paste("(",
+tab[7:9, 1] <- c("3 or less", "4 or greater", "Missing")
+tab[7, 2] <- paste(nrow(tabdata[tabdata$asa == "3 or less" & is.na(tabdata$asa) == F, ]), paste("(",
+                  round(nrow(tabdata[tabdata$asa == "3 or less" & is.na(tabdata$asa) == F, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
+tab[8, 2] <- paste(nrow(tabdata[tabdata$asa == "4 or greater" & is.na(tabdata$asa) == F, ]), paste("(",
+                  round(nrow(tabdata[tabdata$asa == "4 or greater" & is.na(tabdata$asa) == F, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
+tab[9, 2] <- paste(nrow(tabdata[is.na(tabdata$asa) == T, ]), paste("(",
                   round(nrow(tabdata[is.na(tabdata$asa) == T, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
 
-tab[13:14, 1] <- c("BMI (median (IQR))", "Missing (n (%))")
-tab[13, 2] <- paste(round(median(tabdata$bmi, na.rm = T), 2), paste("(",
+tab[10:11, 1] <- c("BMI (median (IQR))", "Missing (n (%))")
+tab[10, 2] <- paste(round(median(tabdata$bmi, na.rm = T), 2), paste("(",
                     round(IQR(tabdata$bmi, na.rm = T), 2), ")", sep = ""))
-tab[14, 2] <- paste(nrow(tabdata[is.na(tabdata$bmi) == T, ]), paste("(",
+tab[11, 2] <- paste(nrow(tabdata[is.na(tabdata$bmi) == T, ]), paste("(",
                     round(nrow(tabdata[is.na(tabdata$bmi) == T, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
 
-tab[15:16, 1] <- c("Albumin (median (IQR))", "Missing (n (%))")
-tab[15, 2] <- paste(round(median(tabdata$albumin, na.rm = T), 2), paste("(",
+tab[12:13, 1] <- c("Albumin (median (IQR))", "Missing (n (%))")
+tab[12, 2] <- paste(round(median(tabdata$albumin, na.rm = T), 2), paste("(",
                    round(IQR(tabdata$albumin, na.rm = T), 2), ")", sep = ""))
-tab[16, 2] <- paste(nrow(tabdata[is.na(tabdata$albumin) == T, ]), paste("(",
+tab[13, 2] <- paste(nrow(tabdata[is.na(tabdata$albumin) == T, ]), paste("(",
                    round(nrow(tabdata[is.na(tabdata$albumin) == T, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
 
-tab[17, 1] <- "30 day mortality (n (%))"
-tab[17, 2] <- paste(nrow(tabdata[tabdata$death30 == 1 & is.na(tabdata$asa) == F, ]), paste("(",
+tab[14, 1] <- "30 day mortality (n (%))"
+tab[14, 2] <- paste(nrow(tabdata[tabdata$death30 == 1 & is.na(tabdata$asa) == F, ]), paste("(",
                     round(nrow(tabdata[tabdata$death30 == 1 & is.na(tabdata$asa) == F, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
  
  # setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
@@ -251,17 +219,21 @@ summary(model2)
 
 #Decisions do not change-- albumin can be excluded, but still report results
 
+
 #==========================================================#
 # Predicted values to individuals' odds to indivs' pred p
 #==========================================================#
 
 #Need a complete case data for BMI, procedure, ASA
 comp <- vadata[, c(which(colnames(vadata) == "hospcode"),
+                   which(colnames(vadata) == "sixmonth"),
                    which(colnames(vadata) == "proced"),
-                   which(colnames(vadata) == "asa"),
+                   which(colnames(vadata) == "asa_indic"),
                    which(colnames(vadata) == "bmi"),
                    which(colnames(vadata) == "death30"))]
 comp <- comp[complete.cases(comp), ]
+
+comp_rec <- comp[comp$sixmonth == 39, ]
 
 #Extract fitted values from summary of model2
 (int <- summary(model2)$coefficients[1, 1])
@@ -269,12 +241,12 @@ comp <- comp[complete.cases(comp), ]
 (pred_asa <- summary(model2)$coefficients[3, 1])
 (pred_bmi <- summary(model2)$coefficients[4, 1])
 
-#Create XB column in comp
-comp$XB <- int + pred_proced*comp$proced + pred_asa*comp$asa + pred_bmi*comp$bmi
+#Create XB column in comp_rec (last 6 month period only)
+comp_rec$XB <- int + pred_proced*comp_rec$proced + pred_asa*comp_rec$asa_indic + pred_bmi*comp_rec$bmi
 
 #Create predicted p column in comp
-comp$pred_p <- inv.logit(comp$XB)
-
+comp_rec$pred_p <- inv.logit(comp_rec$XB) 
+ 
 
 #==========================================================#
 # Create table 2 w/ hospital death rates
@@ -282,7 +254,8 @@ comp$pred_p <- inv.logit(comp$XB)
 
 tab2 <- matrix(data = NA, nrow = length(unique(rec$hospcode)), ncol = 5)
 colnames(tab2) <- c("Hospital", "Patients died", "Patients in surgery", "Percent died",
-                    "Predicted percent died (population-adjusted)")
+                    "Predicted percent died for last 6 months (population-adjusted)")
+
 
 rec <- rec[order(rec$hospcode), c(which(colnames(rec) == "hospcode"),
                                   which(colnames(rec) == "death30"))]
@@ -290,7 +263,11 @@ tab2[1:44, 1] <- unique(rec$hospcode)
 tab2[1:44, 2] <- aggregate(rec$death30, list(rec$hospcode), sum)[, 2]
 tab2[1:44, 3] <- aggregate(rec$death30, list(rec$hospcode), length)[, 2]
 tab2[1:44, 4] <- round(tab2[, 2]/tab2[, 3] * 100, 2)
-tab2[1:44, 5] <- aggregate(comp$pred_p, list(comp$hospcode), mean)[, 2] * 100
+
+#Note: hospital 30 does not have any data for last period, so it will not be estimated for last pd.
+hosp1_29 <- unique(comp_rec$hospcode)[1:29]
+tab2[1:29, 5] <- aggregate(comp_rec$pred_p, list(hosp1_29), mean)[, 2] * 100
+#come back to this and only get pred_p for 1st 29 hosp, then fill in rest w/ hosps 31-44 :)
 
 # setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
 # write.csv(tab2, "TableDeathsByHospital.csv")
