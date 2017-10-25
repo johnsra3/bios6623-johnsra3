@@ -15,7 +15,7 @@ vadata <- read_sas("~/School/AdvancedData/vadata2.sas7bdat")
 
 
 #==========================================================#
-# 10/24: import raw bootstrap results
+# 10/25: import raw bootstrap results
 #==========================================================#
 
 setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
@@ -300,7 +300,6 @@ tab2[31:44, 5] <- round(aggregate(p31_44$pred_p, list(p31_44$hospcode), mean)[, 
   # 6. Find distribution of p_fitted for each hosp, w/ 2.5% and 97.5% pieces (boot.ci)
 
 #Place to store p_fits
-set.seed(9271024)
 num_iter <- 10000
 boot.stats <- matrix(data = NA, ncol = 43, nrow = num_iter)
 colnames(boot.stats) <- c(seq(from = 1, to = 29, by = 1), seq(from = 31, to = 44, by = 1))
@@ -308,17 +307,21 @@ colnames(boot.stats) <- c(seq(from = 1, to = 29, by = 1), seq(from = 31, to = 44
 
 for(i in 1:num_iter){ 
   
+  set.seed(i)
+  
   boot.samps <- sample(nrow(comp), replace = T)
   boot.dat <- comp[boot.samps, ]
   boot.model <- glm(death30 ~ proced + asa_indic + bmi, data = boot.dat, family = binomial(link = "logit"))
   coeff <- summary(boot.model)$coefficients
   
-  boot.fits <- boot.dat[boot.dat$sixmonth == 39, ]
+  #boot.fits <- boot.dat[boot.dat$sixmonth == 39, ]
+  boot.fits <- boot.dat
   boot.fits$xb <- NA
   boot.fits$pfit <- NA
   
-  boot.fits$xb <- coeff[1] + coeff[2]*boot.fits$proced + coeff[3]*boot.fits$asa_indic + coeff[4]*boot.fits$bmi
+  boot.fits$xb <- coeff[1] + coeff[2]*comp$proced + coeff[3]*comp$asa_indic + coeff[4]*comp$bmi
   boot.fits$pfit <- inv.logit(boot.fits$xb)
+  boot.fits <- boot.fits[boot.fits$sixmonth == 39, ]
   
   boot.stats[i, ] <- round(aggregate(boot.fits$pfit, list(boot.fits$hospcode), mean)[, 2] * 100, 2)
   
@@ -328,13 +331,29 @@ for(i in 1:num_iter){
 
 # setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
 # write.csv(boot.stats, "BootstrapResults_raw.csv")
-boot.means <- round(apply(boot.res, 2, mean), 2)
-boot.ci_low <- round(apply(boot.res, 2, quantile, probs = 0.025), 2)
-boot.ci_high <- round(apply(boot.res, 2, quantile, probs = 0.975), 2)
+boot.ci_low <- round(apply(boot.stats, 2, quantile, probs = 0.025), 2)
+boot.ci_high <- round(apply(boot.stats, 2, quantile, probs = 0.975), 2)
 boot.ci <- paste(paste(boot.ci_low, ",", sep = ""), boot.ci_high)
 hosps <- c(seq(from = 1, to = 29, by = 1), seq(from = 31, to = 44, by = 1)) 
 
-boottab <- cbind.data.frame(hosps, boot.means, boot.ci)
-
+boottab <- cbind.data.frame(hosps, boot.ci)
+colnames(boottab) <- c("Hospital", "95% CI")
 #need to put together w/ other table (figure out missing hosp issue before merging)
 
+#==========================================================#
+# Update hospital table w/ bootstrap CIs :) 
+#==========================================================#
+
+tab2_first <- tab2[1:29, ]
+tab2_30 <- as.data.frame(tab2[30, ])
+tab2_end <- tab2[31:44, ]
+
+boottab_first <- boottab[1:29, ]
+boottab_end <- boottab[31:44, ]
+
+finaltab_first <- merge(tab2_first, boottab_first, by = "Hospital")
+finaltab_30 <- matrix(data = NA, nrow = 1, ncol = 6)
+finaltab_30[1,1:5] <- tab2_30[1, 1:5]
+
+
+colnames(finaltab_30) <- colnames(finaltab_first)
