@@ -1,0 +1,4 @@
+"","Covariate","Estimate","95% CI","p-value"
+"1","Procedure (reference = valve surgery)","1.384","1.128, 1.698","0.002"
+"2","ASA (reference = 3 or less)","2.707","2.127, 3.447","<0.001"
+"3","BMI","1.009","0.988, 1.029","0.407"

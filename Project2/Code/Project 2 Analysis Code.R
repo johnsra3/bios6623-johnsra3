@@ -29,7 +29,6 @@ boot.res <- boot.res[, -1]
 rec <- vadata[vadata$sixmonth == 39, ]
 old <- vadata[vadata$sixmonth != 39, ]
 
-
 #==========================================================#
 # Look at BMI issues in most recent period
 #==========================================================#
@@ -219,14 +218,74 @@ tab[14, 2] <- paste(nrow(tabdata[tabdata$death30 == 1 & is.na(tabdata$asa) == F,
 model1 <- glm(death30 ~ proced + asa + bmi + albumin, data = vadata,
               family = binomial(link = "logit"))
 summary(model1)
+coeff1 <- summary(model1)$coefficients
 
 #Without albumin
 model2 <- glm(death30 ~ proced + asa + bmi, data = vadata,
               family = binomial(link = "logit"))
 summary(model2)
+coeff2 <- summary(model2)$coefficients
 
 #Decisions do not change-- albumin can be excluded, but still report results
 
+
+#==========================================================#
+# Make tables for logistic regression results
+#==========================================================#
+
+#Model 1- with albumin
+mod1tab <- matrix(data = NA, nrow = 4, ncol = 4)
+colnames(mod1tab) <- c("Covariate", "Estimate", "95% CI", "p-value")
+
+mod1tab[1:4, 1] <- c("Procedure (reference = valve surgery)", "ASA (reference = 3 or less)", "BMI", "Albumin")
+
+e <- exp(1)
+mod1tab[1, 2] <- round(e^coeff1[2, 1], 3)
+mod1tab[2, 2] <- round(e^coeff1[3, 1], 3)   
+mod1tab[3, 2] <- round(e^coeff1[4, 1], 3)
+mod1tab[4, 2] <- round(e^coeff1[5, 1], 3)
+
+mod1tab[1, 3] <- paste(paste(round(e^(coeff1[2, 1] - 1.96*coeff1[2, 2]), 3), ",", sep = ""), 
+                       round(e^(coeff1[2, 1] + 1.96*coeff1[2, 2]), 3)) 
+mod1tab[2, 3] <- paste(paste(round(e^(coeff1[3, 1] - 1.96*coeff1[3, 2]), 3), ",", sep = ""), 
+                       round(e^(coeff1[3, 1] + 1.96*coeff1[3, 2]), 3)) 
+mod1tab[3, 3] <- paste(paste(round(e^(coeff1[4, 1] - 1.96*coeff1[4, 2]), 3), ",", sep = ""), 
+                       round(e^(coeff1[4, 1] + 1.96*coeff1[4, 2]), 3)) 
+mod1tab[4, 3] <- paste(paste(round(e^(coeff1[5, 1] - 1.96*coeff1[5, 2]), 3), ",", sep = ""), 
+                       round(e^(coeff1[5, 1] + 1.96*coeff1[5, 2]), 3)) 
+
+mod1tab[1, 4] <- round(coeff1[2, 4], 3)
+mod1tab[2, 4] <- round(coeff1[3, 4], 3)
+mod1tab[2, 4] <- "<0.001"
+mod1tab[3, 4] <- round(coeff1[4, 4], 3)
+mod1tab[4, 4] <- round(coeff1[5, 4], 3)
+
+#Model 2- without albumin
+mod2tab <- matrix(data = NA, nrow = 3, ncol = 4)
+colnames(mod2tab) <- c("Covariate", "Estimate", "95% CI", "p-value")
+
+mod2tab[1:3, 1] <- c("Procedure (reference = valve surgery)", "ASA (reference = 3 or less)", "BMI")
+
+e <- exp(1)
+mod2tab[1, 2] <- round(e^coeff2[2, 1], 3)
+mod2tab[2, 2] <- round(e^coeff2[3, 1], 3)   
+mod2tab[3, 2] <- round(e^coeff2[4, 1], 3)
+
+mod2tab[1, 3] <- paste(paste(round(e^(coeff2[2, 1] - 1.96*coeff2[2, 2]), 3), ",", sep = ""), 
+                       round(e^(coeff2[2, 1] + 1.96*coeff2[2, 2]), 3)) 
+mod2tab[2, 3] <- paste(paste(round(e^(coeff2[3, 1] - 1.96*coeff2[3, 2]), 3), ",", sep = ""), 
+                       round(e^(coeff2[3, 1] + 1.96*coeff2[3, 2]), 3)) 
+mod2tab[3, 3] <- paste(paste(round(e^(coeff2[4, 1] - 1.96*coeff2[4, 2]), 3), ",", sep = ""), 
+                       round(e^(coeff2[4, 1] + 1.96*coeff2[4, 2]), 3)) 
+
+mod2tab[1, 4] <- round(coeff2[2, 4], 3)
+mod2tab[2, 4] <- round(coeff2[3, 4], 3)
+mod2tab[2, 4] <- "<0.001"
+mod2tab[3, 4] <- round(coeff2[4, 4], 3)
+
+# setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
+# write.csv(mod1tab, "ModelWithAlbuminResults.csv")
+# write.csv(mod2tab, "ModelWithoutAlbuminResults.csv")
 
 #==========================================================#
 # Predicted values to individuals' odds to indivs' pred p
@@ -325,11 +384,12 @@ for(i in 1:num_iter){
 
 }
 
-setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
-write.csv(boot.stats, "BootstrapResults_raw.csv")
+# setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
+# write.csv(boot.stats, "BootstrapResults_raw.csv")
 
-boot.ci_low <- round(apply(boot.stats, 2, quantile, probs = 0.025), 2)
-boot.ci_high <- round(apply(boot.stats, 2, quantile, probs = 0.975), 2)
+#Now run these with results that were imported--boot.res
+boot.ci_low <- round(apply(boot.res, 2, quantile, probs = 0.025), 2)
+boot.ci_high <- round(apply(boot.res, 2, quantile, probs = 0.975), 2)
 boot.ci <- paste(paste(boot.ci_low, ",", sep = ""), boot.ci_high)
 hosps <- c(seq(from = 1, to = 29, by = 1), seq(from = 31, to = 44, by = 1)) 
 
@@ -346,7 +406,7 @@ tab2_30 <- t(tab2_30)
 tab2_end <- tab2[31:44, ]
 
 boottab_first <- boottab[1:29, ]
-boottab_end <- boottab[31:44, ]
+boottab_end <- boottab[30:43, ]
 
 finaltab_first <- merge(tab2_first, boottab_first, by = "Hospital")
 
@@ -362,3 +422,12 @@ finaltab <- rbind.data.frame(finaltab_first, finaltab_30, finaltab_end)
 #==========================================================#
 # Hosp observed p/expected p > 1.2
 #==========================================================#
+
+finaltab <- as.data.frame(finaltab)
+finaltab$`Unusually High?` <- ifelse(finaltab$`Percent died`/finaltab$`Predicted percent died for last 6 months (population-adjusted)` > 1.2,
+                                         "Yes", "No")
+table(finaltab$`Unusually High?`)
+#18 hospitals were unusually high
+
+setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
+write.csv(finaltab, "TableExpectedPropsBootstrap.csv")
