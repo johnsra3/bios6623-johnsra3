@@ -71,6 +71,9 @@ table(excl$death30)
 summary(comp$death30)
 summary(excl$death30)
 
+summary(comp_39$death30)
+summary(excl_39$death30)
+
 vadata$complete <- ifelse(vadata$X %in% comp$X, 1, 0)
 pd39 <- vadata[vadata$sixmonth == 39, ]
 chisq.test(pd39$complete, pd39$death30) #significantly different!--bias issue
@@ -79,3 +82,18 @@ chisq.test(pd39$complete, pd39$death30) #significantly different!--bias issue
   #expected values may be too low. 
 #Whether looking at period 39 or not... need to figure out which one to report. 
 #Need to note this bias
+
+#==========================================================#
+# Determine if bias from BMI or proced missingness
+#==========================================================#
+
+missing_bmi <- excl[is.na(excl$bmi) == T, ]
+missing_bmi39 <- missing_bmi[missing_bmi$sixmonth == 39, ]
+missing_proced <- excl[is.na(excl$proced) == T, ]
+missing_proced39 <- missing_proced[missing_proced$sixmonth == 39, ]
+
+summary(missing_bmi$death30)
+summary(missing_proced$death30)
+
+summary(missing_bmi39$death30)
+summary(missing_proced39$death30)
