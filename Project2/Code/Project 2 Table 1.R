@@ -55,15 +55,15 @@ tab[8, 2] <- paste(nrow(tabdata[tabdata$asa == "4 or greater" & is.na(tabdata$as
 tab[9, 2] <- paste(nrow(tabdata[is.na(tabdata$asa) == T, ]), paste("(",
                                                                    round(nrow(tabdata[is.na(tabdata$asa) == T, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
 
-tab[10:11, 1] <- c("BMI (median (IQR))", "Missing (n (%))")
-tab[10, 2] <- paste(round(median(tabdata$bmi, na.rm = T), 2), paste("(",
-                                                                    round(IQR(tabdata$bmi, na.rm = T), 2), ")", sep = ""))
+tab[10:11, 1] <- c("BMI (mean (SD))", "Missing (n (%))")
+tab[10, 2] <- paste(round(mean(tabdata$bmi, na.rm = T), 2), paste("(",
+                                                                    round(sd(tabdata$bmi, na.rm = T), 2), ")", sep = ""))
 tab[11, 2] <- paste(nrow(tabdata[is.na(tabdata$bmi) == T, ]), paste("(",
                                                                     round(nrow(tabdata[is.na(tabdata$bmi) == T, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
 
-tab[12:13, 1] <- c("Albumin (median (IQR))", "Missing (n (%))")
-tab[12, 2] <- paste(round(median(tabdata$albumin, na.rm = T), 2), paste("(",
-                                                                        round(IQR(tabdata$albumin, na.rm = T), 2), ")", sep = ""))
+tab[12:13, 1] <- c("Albumin (mean (SD))", "Missing (n (%))")
+tab[12, 2] <- paste(round(mean(tabdata$albumin, na.rm = T), 2), paste("(",
+                                                                        round(sd(tabdata$albumin, na.rm = T), 2), ")", sep = ""))
 tab[13, 2] <- paste(nrow(tabdata[is.na(tabdata$albumin) == T, ]), paste("(",
                                                                         round(nrow(tabdata[is.na(tabdata$albumin) == T, ])/nrow(tabdata) * 100, 2), ")", sep = ""))
 

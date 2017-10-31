@@ -87,16 +87,31 @@ finaltab_end <- merge(tab2_end, boottab_end, by = "Hospital")
 
 finaltab <- rbind.data.frame(finaltab_first, finaltab_30, finaltab_end)
 
-
 #==========================================================#
 # Hosp observed p/expected p > 1.2
 #==========================================================#
 
 finaltab <- as.data.frame(finaltab)
+finaltab$`Observed Above Confidence Interval?` <- ifelse(finaltab$`Percent died` > boot.ci_high, 
+                                                         "Yes", "No")
+finaltab$`Observed Above Confidence Interval?`[30] <- NA
+
+#==========================================================#
+# Hosp observed p/expected p > 1.2
+#==========================================================#
+
 finaltab$`Unusually High?` <- ifelse(finaltab$`Percent died`/finaltab$`Predicted percent died for last 6 months (population-adjusted)` > 1.2,
                                      "Yes", "No")
 table(finaltab$`Unusually High?`)
 #17 hospitals were unusually high
+
+#==========================================================#
+# Hosp observed p/expected p < 0.8
+#==========================================================#
+
+finaltab$`Unusually Low?` <- ifelse(finaltab$`Percent died`/finaltab$`Predicted percent died for last 6 months (population-adjusted)` < 0.8,
+                                     "Yes", "No")
+table(finaltab$`Unusually Low?`)
 
 # setwd("C:/Repositories/bios6623-johnsra3/Project2/Reports")
 # write.csv(finaltab, "TableExpectedPropsBootstrap.csv")

@@ -8,6 +8,7 @@
 # Import data
 #==========================================================#
 
+library(dplyr)
 setwd("~/School/AdvancedData")
 vadata <- read.csv("VadataCleaned.csv", header = T)
 
@@ -49,3 +50,32 @@ table(alb_pres$death30)
 
 
 #No missingness is explained by covs, either MCAR or MNAR 
+
+
+#==========================================================#
+# Compare outcome data for those w/ complete cases & those
+# w/o complete cases for log. regr. 
+#==========================================================#
+
+comp <- vadata[, c(1, 2, 3, 4, 8, 10, 11)]
+comp <- comp[complete.cases(comp), ]
+comp_39 <- comp[comp$sixmonth == 39, ]
+
+excl <- vadata[, c(1, 2, 3, 4, 8, 10, 11)]
+excl <- excl[!excl$X %in% comp$X, ]
+excl_39 <- excl[excl$sixmonth == 39, ]
+
+table(comp$death30)
+table(excl$death30)
+
+summary(comp$death30)
+summary(excl$death30)
+
+vadata$complete <- ifelse(vadata$X %in% comp$X, 1, 0)
+pd39 <- vadata[vadata$sixmonth == 39, ]
+chisq.test(pd39$complete, pd39$death30) #significantly different!--bias!nr
+
+#There is a difference b/t death rates. Note this in discussion/limitations and state that
+  #expected values may be too low. 
+#Whether looking at period 39 or not... need to figure out which one to report. 
+#Need to note this bias
