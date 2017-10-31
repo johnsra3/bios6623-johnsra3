@@ -1,5 +1,5 @@
 #==========================================================#
-# Project 2
+# Project 2 Data Cleaning
 # Purpose: Clean data, save cleaned .csv file
 # Rachel Johnson
 #==========================================================#

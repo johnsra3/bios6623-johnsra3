@@ -1,5 +1,5 @@
 #==========================================================#
-# Project 2
+# Project 2 Logistic Regressions
 # Purpose: Run logistic regressions, create results tables 
 # Rachel Johnson
 #==========================================================#

@@ -1,5 +1,5 @@
 #==========================================================#
-# Project 2
+# Project 2 Missing Data
 # Purpose: Explore missing data related to variable albumin
 # Rachel Johnson
 #==========================================================#
@@ -73,7 +73,7 @@ summary(excl$death30)
 
 vadata$complete <- ifelse(vadata$X %in% comp$X, 1, 0)
 pd39 <- vadata[vadata$sixmonth == 39, ]
-chisq.test(pd39$complete, pd39$death30) #significantly different!--bias!nr
+chisq.test(pd39$complete, pd39$death30) #significantly different!--bias issue
 
 #There is a difference b/t death rates. Note this in discussion/limitations and state that
   #expected values may be too low. 
