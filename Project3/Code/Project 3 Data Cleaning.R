@@ -82,19 +82,19 @@ hist(logmem2$logmemII)
 #=============================================================#
 
 #blockr
-ggplot(data = blockr, aes(x = age, y = blockR, group = demind, col = as.factor(demind))) +
+ggplot(data = blockr, aes(x = age, y = blockR, group = id, col = as.factor(demind))) +
   geom_line()
 
 #animals
-ggplot(data = animals, aes(x = age, y = animals, group = demind, col = as.factor(demind))) +
+ggplot(data = animals, aes(x = age, y = animals, group = id, col = as.factor(demind))) +
   geom_line()
 
 #logmem1
-ggplot(data = logmem1, aes(x = age, y = logmemI, group = demind, col = as.factor(demind))) +
+ggplot(data = logmem1, aes(x = age, y = logmemI, group = id, col = as.factor(demind))) +
   geom_line()
 
 #logmem2
-ggplot(data = logmem2, aes(x = age, y = logmemII, group = demind, col = as.factor(demind))) +
+ggplot(data = logmem2, aes(x = age, y = logmemII, group = id, col = as.factor(demind))) +
   geom_line()
 
 
