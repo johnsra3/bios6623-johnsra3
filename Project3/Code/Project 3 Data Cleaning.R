@@ -54,6 +54,11 @@ animals <- merge(animals, animals_rows, by = "id")
 logmem1 <- merge(logmem1, logmem1_rows, by = "id")
 logmem2 <- merge(logmem2, logmem2_rows, by = "id")
 
+#Only include indivs w/ 3+ visits
+blockr <- blockr[blockr$num_obs > 2, ]
+animals <- animals[animals$num_obs > 2, ]
+logmem1 <- logmem1[logmem1$num_obs > 2, ]
+logmem2 <- logmem2[logmem2$num_obs > 2, ]
 
 #=============================================================#
 # Explore data- blockR
