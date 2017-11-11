@@ -21,7 +21,7 @@
 	-Output file: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
 	-Both files saved in AdvancedData (personal folder, since no data on GitHub)
 	-Removes rows that are completely missing outcomes, then for each outcome removes individuals who don't have at least 3 time points 
-	-Simple exploratory data and basic spaghetti plots
+	-Simple exploratory data and spaghetti plots to compare trajectories across different outcomes (exploratory)
 
 2. Project 3 Demographics Table.R
 	-Input file: Project3Data.csv

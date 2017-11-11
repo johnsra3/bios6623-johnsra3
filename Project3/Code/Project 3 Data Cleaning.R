@@ -10,6 +10,7 @@
 
 library(dplyr)
 library(ggplot2)
+library(gridExtra)
 mci <- read.csv("C:/Users/johnsra3/Documents/School/AdvancedData/Project3Data.csv", header = T)
 
 
@@ -83,20 +84,75 @@ hist(logmem2$logmemII)
 #=============================================================#
 
 #blockr
-ggplot(data = blockr, aes(x = age, y = blockR, group = id, col = as.factor(demind))) +
-  geom_line()
+p1 <-ggplot(data = blockr, aes(x = age, y = blockR, group = id, col = as.factor(demind))) +
+  geom_line() +
+  theme_classic() + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(color = "black"),
+        axis.line.y = element_line(color = "black"),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom",
+        legend.direction = "horizontal") +
+  scale_color_discrete("Developed dementia/MCI") +
+  scale_x_continuous(name = "Age") +
+  scale_y_continuous(name = "Block design score") +
+  ggtitle("BlockR")
+
+
 
 #animals
-ggplot(data = animals, aes(x = age, y = animals, group = id, col = as.factor(demind))) +
-  geom_line()
+p2 <- ggplot(data = animals, aes(x = age, y = animals, group = id, col = as.factor(demind))) +
+  geom_line() +
+  theme_classic() + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(color = "black"),
+        axis.line.y = element_line(color = "black"),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom",
+        legend.direction = "horizontal") +
+  scale_color_discrete("Developed dementia/MCI") +
+  scale_x_continuous(name = "Age") +
+  scale_y_continuous(name = "Animal category fluency score") +
+  ggtitle("Animals")
 
 #logmem1
-ggplot(data = logmem1, aes(x = age, y = logmemI, group = id, col = as.factor(demind))) +
-  geom_line()
+p3 <- ggplot(data = logmem1, aes(x = age, y = logmemI, group = id, col = as.factor(demind))) +
+  geom_line() +
+  theme_classic() + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(color = "black"),
+        axis.line.y = element_line(color = "black"),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom",
+        legend.direction = "horizontal") +
+  scale_color_discrete("Developed dementia/MCI") +
+  scale_x_continuous(name = "Age") +
+  scale_y_continuous(name = "Logical memory score 1") +
+  ggtitle("LogMemI")
 
 #logmem2
-ggplot(data = logmem2, aes(x = age, y = logmemII, group = id, col = as.factor(demind))) +
-  geom_line()
+p4 <- ggplot(data = logmem2, aes(x = age, y = logmemII, group = id, col = as.factor(demind))) +
+  geom_line() +
+  theme_classic() + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(color = "black"),
+        axis.line.y = element_line(color = "black"),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom",
+        legend.direction = "horizontal") +
+  scale_color_discrete("Developed dementia/MCI") +scale_x_continuous(name = "Age") +
+  scale_y_continuous(name = "Logical memory score 2") +
+  ggtitle("LogMemII")
+
+grid.arrange(p1, p2, p3, p4, ncol = 2)
 
 
 #=============================================================#
