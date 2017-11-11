@@ -22,3 +22,9 @@
 	-Both files saved in AdvancedData (personal folder, since no data on GitHub)
 	-Removes rows that are completely missing outcomes, then for each outcome removes individuals who don't have at least 3 time points 
 	-Simple exploratory data and basic spaghetti plots
+
+2. Project 3 Demographics Table.R
+	-Input file: Project3Data.csv
+	-Output file: Table1Demographics.csv
+	-Uses first observation for all n = 216 individuals to create demographics table at baseline, stratified b/t those who do and don't 
+		develop dementia/MCI during course of the study	

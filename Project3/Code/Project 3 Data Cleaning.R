@@ -60,8 +60,9 @@ animals <- animals[animals$num_obs > 2, ]
 logmem1 <- logmem1[logmem1$num_obs > 2, ]
 logmem2 <- logmem2[logmem2$num_obs > 2, ]
 
+
 #=============================================================#
-# Explore data- blockR
+# Explore outcome data
 #=============================================================#
 
 summary(blockr$blockR)
