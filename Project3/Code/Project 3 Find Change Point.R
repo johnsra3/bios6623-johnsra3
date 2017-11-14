@@ -26,13 +26,18 @@ logmem2 <- read.csv("LogMem2Outcome.csv", header = T)
 #   diff in time b/t age @ visit and diag age
 #=============================================================#
 
-blockr$timeb4dem <- ifelse(blockr$demind == 1 & blockr$ageonset - blockr$age >= 0,
+blockr <- blockr[blockr$demind == 1,]
+animals <- animals[animals$demind == 1, ]
+logmem1 <- logmem1[logmem1$demind == 1, ]
+logmem2 <- logmem2[logmem2$demind == 1, ]
+
+blockr$timeb4dem <- ifelse(blockr$ageonset - blockr$age >= 0,
                            blockr$age - blockr$ageonset, 0)
-animals$timeb4dem <- ifelse(animals$demind == 1 & animals$ageonset - animals$age >= 0,
+animals$timeb4dem <- ifelse(animals$ageonset - animals$age >= 0,
                            animals$age - animals$ageonset, 0)
-logmem1$timeb4dem <- ifelse(logmem1$demind == 1 & logmem1$ageonset - logmem1$age >= 0,
+logmem1$timeb4dem <- ifelse(logmem1$ageonset - logmem1$age >= 0,
                            logmem1$age - logmem1$ageonset, 0)
-logmem2$timeb4dem <- ifelse(logmem2$demind == 1 & logmem2$ageonset - logmem2$age >= 0,
+logmem2$timeb4dem <- ifelse(logmem2$ageonset - logmem2$age >= 0,
                            logmem2$age - logmem2$ageonset, 0)
 
 
@@ -91,7 +96,7 @@ cp.model <- cp.search_and_fit(patid, t1, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
-#t2 = -3.66766-- This seems to match up fairly well to what's online!
+#t2 = -4.126-- This seems to match up fairly well to what's online!
 
 
 #=============================================================#
@@ -115,7 +120,8 @@ cp.model <- cp.search_and_fit(patid, t1, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
-#t2 = -2.229631, hmm seems a little lower
+#t2 = -2.7705, hmm seems a little lower
+
 
 #=============================================================#
 # Change point for logmem1
@@ -138,7 +144,7 @@ cp.model <- cp.search_and_fit(patid, t1, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
-#t2 = -1.82367879, hmm seems a little lower
+#t2 = -1.776, hmm seems a little lower
 
 
 #=============================================================#
@@ -162,4 +168,4 @@ cp.model <- cp.search_and_fit(patid, t1, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
-#t2 = -1.6992988
+#t2 = -1.5744, hmm seems a little low
