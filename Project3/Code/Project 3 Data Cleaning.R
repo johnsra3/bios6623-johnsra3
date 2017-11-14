@@ -11,11 +11,36 @@
 library(dplyr)
 library(ggplot2)
 library(gridExtra)
+library(plyr)
+library(tidyr)
+
 mci <- read.csv("C:/Users/johnsra3/Documents/School/AdvancedData/Project3Data.csv", header = T)
 
 
 #=============================================================#
-# Remove rows that are completely NA for outcomes
+# Add number of visits column 
+#=============================================================#
+
+freq <- as.data.frame(table(mci$id))
+colnames(freq) <- c("id", "numobs")
+mci <- merge(mci, freq, by = "id")
+
+
+#=============================================================#
+# Length of follow-up column 
+#=============================================================#
+
+test <- ddply(mci, .(id), function(x) x[c(1, nrow(x)), ])
+test <- test[, c(which(colnames(test) == "id"),
+                 which(colnames(test) == "age"))]
+test$whichvisit <- rep(c(1, 2), times = nrow(test)/2)
+test_wide <- spread(test, whichvisit, age)
+test_wide$followup <- test_wide$`2` - test_wide$`1`
+
+mci <- merge(test_wide, mci, by = "id")
+
+#=============================================================#
+# Remove missing data rows
 #=============================================================#
 
 allmissing <- mci[is.na(mci$blockR) == T & is.na(mci$animals) == T & is.na(mci$logmemI) == T & is.na(mci$logmemII) == T, ]
@@ -28,10 +53,10 @@ mci <- mci[!rownames(mci) %in% rownames(allmissing), ]
 #=============================================================#
 
 #Get each outcome into a separate data set
-blockr <- mci[, c(1, 2, 3, 4, 5, 6, 10, 11)]
-animals <- mci[, c(1, 2, 3, 4, 5, 7, 10, 11)]
-logmem1 <- mci[, c(1, 2, 3, 4, 5, 8, 10, 11)]
-logmem2 <- mci[, c(1, 2, 3, 4, 5, 9, 10, 11)]
+blockr <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15)]
+animals <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15)]
+logmem1 <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15)]
+logmem2 <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15)]
 
 #Remove missing obs for each outcome
 blockr <- blockr[is.na(blockr$blockR) == F, ]
@@ -160,6 +185,7 @@ grid.arrange(p1, p2, p3, p4, ncol = 2)
 #=============================================================#
 
 setwd("~/School/AdvancedData")
+write.csv(mci, "MCICleaned.csv")
 write.csv(blockr, "BlockROutcome.csv")
 write.csv(animals, "AnimalsOutcome.csv")
 write.csv(logmem1, "LogMem1Outcome.csv")

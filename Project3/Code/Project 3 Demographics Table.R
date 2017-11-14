@@ -9,9 +9,7 @@
 #=============================================================#
 
 library(tableone)
-
-setwd("~/School/AdvancedData")
-mci <- read.csv("C:/Users/johnsra3/Documents/School/AdvancedData/Project3Data.csv", header = T)
+mci <- read.csv("C:/Users/johnsra3/Documents/School/AdvancedData/MCICleaned.csv", header = T)
 
 
 #=============================================================#
@@ -31,11 +29,13 @@ mci <- mci[, -which(colnames(mci) == "cdr")]
 mci$gender <- factor(mci$gender, levels = c("1", "2"), labels = c("Male", "Female"))
 mci$demind <- factor(mci$demind, levels = c("0", "1"))
 
+
 #=============================================================#
 # Select vars and create table
 #=============================================================#
 
-tabvars <- colnames(mci)[which(colnames(mci) == "gender"):which(colnames(mci) == "logmemII")]
+tabvars <- c("numobs", "followup", "gender", "SES", "age", "blockR", 
+             "animals", "logmemI", "logmemII")
 tab1 <- CreateTableOne(vars = tabvars, strata = "demind", data = mci, test = F)
 tab1print <- as.data.frame(print(tab1, showAllLevels = T))
 
