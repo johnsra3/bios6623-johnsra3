@@ -9,8 +9,6 @@
 #=============================================================#
 
 library(dplyr)
-library(ggplot2)
-library(gridExtra)
 library(plyr)
 library(tidyr)
 
@@ -39,18 +37,22 @@ test_wide$followup <- test_wide$`2` - test_wide$`1`
 
 mci <- merge(test_wide, mci, by = "id")
 
+
 #=============================================================#
-# Remove missing data rows
+# Create new variable stdized around minimum age
+#=============================================================#
+
+mci$age_59 <- mci$age - 59
+
+
+#=============================================================#
+# Remove obs missing all outcomes, then
+# remove individuals who don't have at least 3 time points-
+# DO THIS FOR EACH OUTCOME!
 #=============================================================#
 
 allmissing <- mci[is.na(mci$blockR) == T & is.na(mci$animals) == T & is.na(mci$logmemI) == T & is.na(mci$logmemII) == T, ]
 mci <- mci[!rownames(mci) %in% rownames(allmissing), ]
-
-
-#=============================================================#
-# Remove individuals who don't have at least 3 time points-
-# DO THIS FOR EACH OUTCOME!
-#=============================================================#
 
 #Get each outcome into a separate data set
 blockr <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15)]
@@ -85,99 +87,6 @@ blockr <- blockr[blockr$num_obs > 2, ]
 animals <- animals[animals$num_obs > 2, ]
 logmem1 <- logmem1[logmem1$num_obs > 2, ]
 logmem2 <- logmem2[logmem2$num_obs > 2, ]
-
-
-#=============================================================#
-# Explore outcome data
-#=============================================================#
-
-summary(blockr$blockR)
-hist(blockr$blockR)
-
-summary(animals$animals)
-hist(animals$animals)
-
-summary(logmem1$logmemI)
-hist(logmem1$logmemI)
-
-summary(logmem2$logmemII)
-hist(logmem2$logmemII)
-
-
-#=============================================================#
-# Spaghetti plots- exploration of trajectory
-#=============================================================#
-
-#blockr
-p1 <-ggplot(data = blockr, aes(x = age, y = blockR, group = id, col = as.factor(demind))) +
-  geom_line() +
-  theme_classic() + 
-  theme(panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line.x = element_line(color = "black"),
-        axis.line.y = element_line(color = "black"),
-        plot.title = element_text(hjust = 0.5),
-        legend.position = "bottom",
-        legend.direction = "horizontal") +
-  scale_color_discrete("Developed dementia/MCI") +
-  scale_x_continuous(name = "Age") +
-  scale_y_continuous(name = "Block design score") +
-  ggtitle("BlockR")
-
-
-
-#animals
-p2 <- ggplot(data = animals, aes(x = age, y = animals, group = id, col = as.factor(demind))) +
-  geom_line() +
-  theme_classic() + 
-  theme(panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line.x = element_line(color = "black"),
-        axis.line.y = element_line(color = "black"),
-        plot.title = element_text(hjust = 0.5),
-        legend.position = "bottom",
-        legend.direction = "horizontal") +
-  scale_color_discrete("Developed dementia/MCI") +
-  scale_x_continuous(name = "Age") +
-  scale_y_continuous(name = "Animal category fluency score") +
-  ggtitle("Animals")
-
-#logmem1
-p3 <- ggplot(data = logmem1, aes(x = age, y = logmemI, group = id, col = as.factor(demind))) +
-  geom_line() +
-  theme_classic() + 
-  theme(panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line.x = element_line(color = "black"),
-        axis.line.y = element_line(color = "black"),
-        plot.title = element_text(hjust = 0.5),
-        legend.position = "bottom",
-        legend.direction = "horizontal") +
-  scale_color_discrete("Developed dementia/MCI") +
-  scale_x_continuous(name = "Age") +
-  scale_y_continuous(name = "Logical memory score 1") +
-  ggtitle("LogMemI")
-
-#logmem2
-p4 <- ggplot(data = logmem2, aes(x = age, y = logmemII, group = id, col = as.factor(demind))) +
-  geom_line() +
-  theme_classic() + 
-  theme(panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line.x = element_line(color = "black"),
-        axis.line.y = element_line(color = "black"),
-        plot.title = element_text(hjust = 0.5),
-        legend.position = "bottom",
-        legend.direction = "horizontal") +
-  scale_color_discrete("Developed dementia/MCI") +scale_x_continuous(name = "Age") +
-  scale_y_continuous(name = "Logical memory score 2") +
-  ggtitle("LogMemII")
-
-grid.arrange(p1, p2, p3, p4, ncol = 2)
 
 
 #=============================================================#

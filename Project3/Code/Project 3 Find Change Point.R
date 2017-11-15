@@ -6,6 +6,8 @@
 
 #Note: Not sure that I've done change point stuff correctly, 
   #but have attempted it for each outcome
+#Notes from Nichole: need to have these models the exact same
+  #as the model that we're going to fit--make it match paper
 
 
 #=============================================================#
@@ -22,22 +24,16 @@ logmem2 <- read.csv("LogMem2Outcome.csv", header = T)
 
 
 #=============================================================#
-# Select only people w/ dementia for each outcome, then find
-#   diff in time b/t age @ visit and diag age
+# Find diff in time b/t age @ visit and diag age
 #=============================================================#
 
-blockr <- blockr[blockr$demind == 1,]
-animals <- animals[animals$demind == 1, ]
-logmem1 <- logmem1[logmem1$demind == 1, ]
-logmem2 <- logmem2[logmem2$demind == 1, ]
-
-blockr$timeb4dem <- ifelse(blockr$ageonset - blockr$age >= 0,
+blockr$timeb4dem <- ifelse(blockr$demind == 1,
                            blockr$age - blockr$ageonset, 0)
-animals$timeb4dem <- ifelse(animals$ageonset - animals$age >= 0,
+animals$timeb4dem <- ifelse(animals$demind == 1,
                            animals$age - animals$ageonset, 0)
-logmem1$timeb4dem <- ifelse(logmem1$ageonset - logmem1$age >= 0,
+logmem1$timeb4dem <- ifelse(logmem1$demind == 1,
                            logmem1$age - logmem1$ageonset, 0)
-logmem2$timeb4dem <- ifelse(logmem2$ageonset - logmem2$age >= 0,
+logmem2$timeb4dem <- ifelse(logmem2$demind == 1,
                            logmem2$age - logmem2$ageonset, 0)
 
 
@@ -55,7 +51,7 @@ cp.search_and_fit<-function(patid, t1, age, ses, gender, y, cps){
   for (i in 1:length(cps)){
     cp <- cps[i]
     t2 <- ifelse(t1 > cp, t1 - cp, 0)
-    cp.model <- lme(y ~ t1 + t2 + age + ses + gender, random = ~1|patid, method = 'ML')
+    cp.model <- lme(y ~ t2 + age + ses + gender, random = ~1|patid, method = 'ML')
     ll[i, ] <- c(cp, logLik(cp.model))
   }
   
@@ -94,9 +90,9 @@ cps <- seq(from = -15.1, to = -0.1, by = 0.1)
 #Run the function on the dataset
 cp.model <- cp.search_and_fit(patid, t1, age, ses, gender, y, cps)
 summary(cp.model$model)
-(coeff <- cp.model$model$coefficients$fixed)
+coeff <- cp.model$model$coefficients$fixed
 
-#t2 = -4.126-- This seems to match up fairly well to what's online!
+#cp = -3.6-- This seems to match up fairly well to what's online!
 
 
 #=============================================================#
@@ -120,7 +116,7 @@ cp.model <- cp.search_and_fit(patid, t1, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
-#t2 = -2.7705, hmm seems a little lower
+#cp = -3.9
 
 
 #=============================================================#
@@ -144,7 +140,7 @@ cp.model <- cp.search_and_fit(patid, t1, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
-#t2 = -1.776, hmm seems a little lower
+#cp = -3.1
 
 
 #=============================================================#
@@ -168,4 +164,4 @@ cp.model <- cp.search_and_fit(patid, t1, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
-#t2 = -1.5744, hmm seems a little low
+#cp = -3.9
