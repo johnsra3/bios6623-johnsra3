@@ -55,10 +55,10 @@ allmissing <- mci[is.na(mci$blockR) == T & is.na(mci$animals) == T & is.na(mci$l
 mci <- mci[!rownames(mci) %in% rownames(allmissing), ]
 
 #Get each outcome into a separate data set
-blockr <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15)]
-animals <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15)]
-logmem1 <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15)]
-logmem2 <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15)]
+blockr <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16)]
+animals <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16)]
+logmem1 <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16)]
+logmem2 <- mci[, c(1, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16)]
 
 #Remove missing obs for each outcome
 blockr <- blockr[is.na(blockr$blockR) == F, ]

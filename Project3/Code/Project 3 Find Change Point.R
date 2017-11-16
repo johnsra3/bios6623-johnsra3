@@ -57,9 +57,9 @@ cp.search_and_fit<-function(patid, timeb4dem, age, ses, gender, y, cps){
 fivenum(blockr$timeb4dem)
 
 patid <- as.character(blockr$id)
-demind <- blockr$demind
+demind <- as.factor(blockr$demind)
 timeb4dem <- blockr$timeb4dem
-age <- blockr$age - 59
+age <- blockr$age_59
 ses <- blockr$SES
 gender <- factor(blockr$gender, levels = c("1", "2"))
 y <- blockr$blockR
@@ -72,6 +72,7 @@ cp.model <- cp.search_and_fit(patid, timeb4dem, age, ses, gender, y, cps)
 summary(cp.model$model)
 coeff <- cp.model$model$coefficients$fixed
 
+blockr_cp <- cp.model$cp
 #cp = -3.9-- This seems to match up fairly well to what's online!
 
 
@@ -82,9 +83,9 @@ coeff <- cp.model$model$coefficients$fixed
 fivenum(animals$timeb4dem)
 
 patid <- as.character(animals$id)
-demind <- animals$demind
+demind <- as.factor(animals$demind)
 timeb4dem <- animals$timeb4dem
-age <- animals$age - 59
+age <- animals$age_59
 ses <- animals$SES
 gender <- factor(animals$gender, levels = c("1", "2"))
 y <- animals$animals
@@ -97,6 +98,7 @@ cp.model <- cp.search_and_fit(patid, timeb4dem, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
+animals_cp <- cp.model$cp
 #cp = -3.9
 
 
@@ -107,9 +109,9 @@ summary(cp.model$model)
 fivenum(logmem1$timeb4dem)
 
 patid <- as.character(logmem1$id)
-demind <- logmem1$demind
+demind <- as.factor(logmem1$demind)
 timeb4dem <- logmem1$timeb4dem
-age <- logmem1$age - 59
+age <- logmem1$age_59
 ses <- logmem1$SES
 gender <- factor(logmem1$gender, levels = c("1", "2"))
 y <- logmem1$logmemI
@@ -121,6 +123,7 @@ cp.model <- cp.search_and_fit(patid, timeb4dem, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
+logmem1_cp <- cp.model$cp
 #cp = -2.8
 
 
@@ -131,9 +134,9 @@ summary(cp.model$model)
 fivenum(logmem2$timeb4dem)
 
 patid <- as.character(logmem2$id)
-demind <- logmem2$demind
+demind <- as.factor(logmem2$demind)
 timeb4dem <- logmem2$timeb4dem
-age <- logmem2$age - 59
+age <- logmem2$age_59
 ses <- logmem2$SES
 gender <- factor(logmem2$gender, levels = c("1", "2"))
 y <- logmem2$logmemII
@@ -146,4 +149,29 @@ cp.model <- cp.search_and_fit(patid, timeb4dem, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
+logmem2_cp <- cp.model$cp
 #cp = -3.0
+
+
+#=============================================================#
+# Prepare each data set for modeling
+#=============================================================#
+
+#Each model will include: age_59, demind, age_59*demind,
+  #SES, gender, max(age - ageonset + cp, 0)
+
+blockr$timemax <- blockr$timeb4dem - blockr_cp
+animals$timemax <- animals$timeb4dem - animals_cp 
+logmem1$timemax <- logmem1$timeb4dem - logmem1_cp
+logmem2$timemax <- logmem2$timeb4dem - logmem2_cp 
+
+blockr$timecp <- ifelse(blockr$timemax < 0, 0, blockr$timemax)
+animals$timecp <- ifelse(animals$timemax < 0, 0, animals$timemax)
+logmem1$timecp <- ifelse(logmem1$timemax < 0, 0, logmem1$timemax)
+logmem2$timecp <- ifelse(logmem2$timemax < 0, 0, logmem2$timemax
+
+setwd("C:/Users/johnsra3/Documents/School/AdvancedData")
+write.csv(blockr, "BlockRModeling.csv")
+write.csv(animals, "AnimalsModeling.csv")
+write.csv(logmem1, "LogMem1Modeling.csv")
+write.csv(logmem2, "LogMem2Modeling.csv")

@@ -37,5 +37,6 @@
 
 4. Project 3 Find Change Point.R
 	-Input files: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
-	-Output files: ....................
+	-Output files: BlockRModeling.csv, AnimalsModeling.csv, LogMem1Modeling.csv, LogMem2Modeling.csv
 	-Adapts Camille Moore's code to find change point for each outcome model
+
