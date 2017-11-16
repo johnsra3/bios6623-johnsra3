@@ -18,13 +18,24 @@
 
 1. Project 3 Data Cleaning.R
 	-Input file: Project3Data.csv
-	-Output file: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
+	-Output files: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
 	-Both files saved in AdvancedData (personal folder, since no data on GitHub)
 	-Removes rows that are completely missing outcomes, then for each outcome removes individuals who don't have at least 3 time points 
-	-Simple exploratory data and spaghetti plots to compare trajectories across different outcomes (exploratory)
 
 2. Project 3 Demographics Table.R
 	-Input file: Project3Data.csv
 	-Output file: Table1Demographics.csv
 	-Uses first observation for all n = 216 individuals to create demographics table at baseline, stratified b/t those who do and don't 
 		develop dementia/MCI during course of the study	
+
+3. Project 3 Spaghetti Plots.R
+	-Input files: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
+	-Output files: C:\Repositories\bios6623-johnsra3\Project3\Reports\Spaghetti Plots- Overall Trajectories.png,
+			C:\Repositories\bios6623-johnsra3\Project3\Reports\Spaghetti Plots- Time before dementia diagnosis.png
+	-Spaghetti plots (1-4): trajectory for all indivs over course of study, colored by dementia status 
+	-Spaghetti plots (5-8): trajectory for individuals with dementia leading up to diagnosis
+
+4. Project 3 Find Change Point.R
+	-Input files: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
+	-Output files: ....................
+	-Adapts Camille Moore's code to find change point for each outcome model

@@ -24,25 +24,11 @@ logmem2 <- read.csv("LogMem2Outcome.csv", header = T)
 
 
 #=============================================================#
-# Find diff in time b/t age @ visit and diag age
-#=============================================================#
-
-blockr$timeb4dem <- ifelse(blockr$demind == 1,
-                           blockr$age - blockr$ageonset, 0)
-animals$timeb4dem <- ifelse(animals$demind == 1,
-                           animals$age - animals$ageonset, 0)
-logmem1$timeb4dem <- ifelse(logmem1$demind == 1,
-                           logmem1$age - logmem1$ageonset, 0)
-logmem2$timeb4dem <- ifelse(logmem2$demind == 1,
-                           logmem2$age - logmem2$ageonset, 0)
-
-
-#=============================================================#
 # Change point function
 #=============================================================#
 
 #Create a function to search for change point and fit final change point model
-cp.search_and_fit<-function(patid, t1, age, ses, gender, y, cps){
+cp.search_and_fit<-function(patid, timeb4dem, age, ses, gender, y, cps){
   
   #Place to store likelihoods from the CP search
   ll<-data.frame(changepoint = rep(NA, length(cps)), ll = rep(NA, length(cps)))
@@ -50,8 +36,8 @@ cp.search_and_fit<-function(patid, t1, age, ses, gender, y, cps){
   #Search for the CP
   for (i in 1:length(cps)){
     cp <- cps[i]
-    t2 <- ifelse(t1 > cp, t1 - cp, 0)
-    cp.model <- lme(y ~ t2 + age + ses + gender, random = ~1|patid, method = 'ML')
+    timemax <- ifelse(timeb4dem > cp, timeb4dem - cp, 0)
+    cp.model <- lme(y ~ age + demind + age*demind + timemax + ses + gender, random = ~1|patid, method = 'ML')
     ll[i, ] <- c(cp, logLik(cp.model))
   }
   
@@ -63,36 +49,37 @@ cp.search_and_fit<-function(patid, t1, age, ses, gender, y, cps){
   print(cp)
   
   #Fit the final model
-  t2 <- ifelse(t1 > cp, t1 - cp, 0)
-  cp.model <- lme(y~t1+t2, random=~1|patid)
+  timemax <- ifelse(timeb4dem > cp, timeb4dem - cp, 0)
+  cp.model <- lme(y~ age + demind + age*demind + timemax + ses + gender, random=~1|patid)
   return(list(cp=cp, model=cp.model))
 
 }
 
 
 #=============================================================#
-# Change point for blockR
+# Change point for blockR---updated but getting errors!!
+#   HAVEN'T ATTEMPTED THIS YET IN OTHER OUTCOMES
 #=============================================================#
 
 fivenum(blockr$timeb4dem)
 
 patid <- as.character(blockr$id)
-t1 <- blockr$timeb4dem
+demind <- blockr$demind
+timeb4dem <- blockr$timeb4dem
 age <- blockr$age
 ses <- blockr$SES
 gender <- factor(blockr$gender, levels = c("1", "2"))
 y <- blockr$blockR
 
-#Sequence of change points to consider
 cps <- seq(from = -15.1, to = -0.1, by = 0.1)
 
 
 #Run the function on the dataset
-cp.model <- cp.search_and_fit(patid, t1, age, ses, gender, y, cps)
+cp.model <- cp.search_and_fit(patid, timeb4dem, age, ses, gender, y, cps)
 summary(cp.model$model)
 coeff <- cp.model$model$coefficients$fixed
 
-#cp = -3.6-- This seems to match up fairly well to what's online!
+#cp = -3.9-- This seems to match up fairly well to what's online!
 
 
 #=============================================================#
@@ -102,7 +89,8 @@ coeff <- cp.model$model$coefficients$fixed
 fivenum(animals$timeb4dem)
 
 patid <- as.character(animals$id)
-t1 <- animals$timeb4dem
+demind <- animals$demind
+timeb4dem <- animals$timeb4dem
 age <- animals$age
 ses <- animals$SES
 gender <- factor(animals$gender, levels = c("1", "2"))
@@ -112,11 +100,11 @@ y <- animals$animals
 cps <- seq(from = -12.4, to = -0.1, by = 0.1)
 
 #Run the function on the dataset
-cp.model <- cp.search_and_fit(patid, t1, age, ses, gender, y, cps)
+cp.model <- cp.search_and_fit(patid, timeb4dem, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
-#cp = -3.9
+#cp = -3.4
 
 
 #=============================================================#
@@ -125,18 +113,13 @@ summary(cp.model$model)
 
 fivenum(logmem1$timeb4dem)
 
-patid <- as.character(logmem1$id)
-t1 <- logmem1$timeb4dem
-age <- logmem1$age
-ses <- logmem1$SES
-gender <- factor(logmem1$gender, levels = c("1", "2"))
-y <- logmem1$logmemI
+
 
 #Sequence of change points to consider
 cps <- seq(from = -15.1, to = -0.1, by = 0.1)
 
 #Run the function on the dataset
-cp.model <- cp.search_and_fit(patid, t1, age, ses, gender, y, cps)
+cp.model <- cp.search_and_fit(patid, timeb4dem, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
@@ -149,18 +132,12 @@ summary(cp.model$model)
 
 fivenum(logmem2$timeb4dem)
 
-patid <- as.character(logmem2$id)
-t1 <- logmem2$timeb4dem
-age <- logmem2$age
-ses <- logmem2$SES
-gender <- factor(logmem2$gender, levels = c("1", "2"))
-y <- logmem2$logmemII
 
 #Sequence of change points to consider
 cps <- seq(from = -15.1, to = -0.1, by = 0.1)
 
 #Run the function on the dataset
-cp.model <- cp.search_and_fit(patid, t1, age, ses, gender, y, cps)
+cp.model <- cp.search_and_fit(patid, timeb4dem, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 

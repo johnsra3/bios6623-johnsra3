@@ -88,6 +88,15 @@ animals <- animals[animals$num_obs > 2, ]
 logmem1 <- logmem1[logmem1$num_obs > 2, ]
 logmem2 <- logmem2[logmem2$num_obs > 2, ]
 
+#Add variable for time b/t age and onset age
+blockr$timeb4dem <- ifelse(blockr$demind == 1,
+                           blockr$age - blockr$ageonset, 0)
+animals$timeb4dem <- ifelse(animals$demind == 1,
+                            animals$age - animals$ageonset, 0)
+logmem1$timeb4dem <- ifelse(logmem1$demind == 1,
+                            logmem1$age - logmem1$ageonset, 0)
+logmem2$timeb4dem <- ifelse(logmem2$demind == 1,
+                            logmem2$age - logmem2$ageonset, 0)
 
 #=============================================================#
 # Write csvs of outcome data sets
