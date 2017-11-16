@@ -4,12 +4,6 @@
 # Rachel Johnson
 #=============================================================#
 
-#Note: Not sure that I've done change point stuff correctly, 
-  #but have attempted it for each outcome
-#Notes from Nichole: need to have these models the exact same
-  #as the model that we're going to fit--make it match paper
-
-
 #=============================================================#
 # Import data
 #=============================================================#
@@ -57,8 +51,7 @@ cp.search_and_fit<-function(patid, timeb4dem, age, ses, gender, y, cps){
 
 
 #=============================================================#
-# Change point for blockR---updated but getting errors!!
-#   HAVEN'T ATTEMPTED THIS YET IN OTHER OUTCOMES
+# Change point for block
 #=============================================================#
 
 fivenum(blockr$timeb4dem)
@@ -66,7 +59,7 @@ fivenum(blockr$timeb4dem)
 patid <- as.character(blockr$id)
 demind <- blockr$demind
 timeb4dem <- blockr$timeb4dem
-age <- blockr$age
+age <- blockr$age - 59
 ses <- blockr$SES
 gender <- factor(blockr$gender, levels = c("1", "2"))
 y <- blockr$blockR
@@ -91,7 +84,7 @@ fivenum(animals$timeb4dem)
 patid <- as.character(animals$id)
 demind <- animals$demind
 timeb4dem <- animals$timeb4dem
-age <- animals$age
+age <- animals$age - 59
 ses <- animals$SES
 gender <- factor(animals$gender, levels = c("1", "2"))
 y <- animals$animals
@@ -104,7 +97,7 @@ cp.model <- cp.search_and_fit(patid, timeb4dem, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
-#cp = -3.4
+#cp = -3.9
 
 
 #=============================================================#
@@ -113,9 +106,14 @@ summary(cp.model$model)
 
 fivenum(logmem1$timeb4dem)
 
+patid <- as.character(logmem1$id)
+demind <- logmem1$demind
+timeb4dem <- logmem1$timeb4dem
+age <- logmem1$age - 59
+ses <- logmem1$SES
+gender <- factor(logmem1$gender, levels = c("1", "2"))
+y <- logmem1$logmemI
 
-
-#Sequence of change points to consider
 cps <- seq(from = -15.1, to = -0.1, by = 0.1)
 
 #Run the function on the dataset
@@ -123,7 +121,7 @@ cp.model <- cp.search_and_fit(patid, timeb4dem, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
-#cp = -3.1
+#cp = -2.8
 
 
 #=============================================================#
@@ -132,6 +130,13 @@ summary(cp.model$model)
 
 fivenum(logmem2$timeb4dem)
 
+patid <- as.character(logmem2$id)
+demind <- logmem2$demind
+timeb4dem <- logmem2$timeb4dem
+age <- logmem2$age - 59
+ses <- logmem2$SES
+gender <- factor(logmem2$gender, levels = c("1", "2"))
+y <- logmem2$logmemII
 
 #Sequence of change points to consider
 cps <- seq(from = -15.1, to = -0.1, by = 0.1)
@@ -141,4 +146,4 @@ cp.model <- cp.search_and_fit(patid, timeb4dem, age, ses, gender, y, cps)
 summary(cp.model$model)
 (coeff <- cp.model$model$coefficients$fixed)
 
-#cp = -3.9
+#cp = -3.0
