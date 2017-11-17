@@ -168,7 +168,12 @@ logmem2$timemax <- logmem2$timeb4dem - logmem2_cp
 blockr$timecp <- ifelse(blockr$timemax < 0, 0, blockr$timemax)
 animals$timecp <- ifelse(animals$timemax < 0, 0, animals$timemax)
 logmem1$timecp <- ifelse(logmem1$timemax < 0, 0, logmem1$timemax)
-logmem2$timecp <- ifelse(logmem2$timemax < 0, 0, logmem2$timemax
+logmem2$timecp <- ifelse(logmem2$timemax < 0, 0, logmem2$timemax)
+
+blockr[is.na(blockr)] <- ""
+animals[is.na(animals)] <- ""
+logmem1[is.na(logmem1)] <- ""
+logmem2[is.na(logmem2)] <- ""
 
 setwd("C:/Users/johnsra3/Documents/School/AdvancedData")
 write.csv(blockr, "BlockRModeling.csv")

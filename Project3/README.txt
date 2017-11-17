@@ -40,3 +40,16 @@
 	-Output files: BlockRModeling.csv, AnimalsModeling.csv, LogMem1Modeling.csv, LogMem2Modeling.csv
 	-Adapts Camille Moore's code to find change point for each outcome model
 
+5. Mixed Models- BlockR (SAS File)
+	-Input file: BlockRModeling.csv
+	
+6. Mixed Models- Animals (SAS File)
+	-Input file: AnimalsModeling.csv
+
+7. Mixed Models- LogMem1 (SAS File)
+	-Input file: LogMem1Modeling.csv
+
+8. Mixed Models- LogMem2 (SAS File)
+	-Input file: LogMem2Modeling.csv
+
+
