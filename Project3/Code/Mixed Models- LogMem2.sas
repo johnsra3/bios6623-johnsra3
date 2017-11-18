@@ -25,7 +25,7 @@ RUN;
 
 PROC MIXED data = logmem2;
 	CLASS id gender demind;
-	MODEL logmemII = age demind age*demind timecp ses gender / solution;
+	MODEL logmemII = age_59 demind age_59*demind timecp ses gender / solution;
 	RANDOM intercept / subject = id;
 RUN;
 
@@ -35,7 +35,7 @@ RUN;
 
 PROC MIXED data = logmem2;
 	CLASS id gender demind;
-	MODEL logmemII = age demind age*demind timecp ses gender / solution;
+	MODEL logmemII = age_59 demind age_59*demind timecp ses gender / solution;
 	RANDOM intercept / subject = id;
 	REPEATED / type = AR(1) subject = id;
 RUN;
@@ -46,7 +46,7 @@ RUN;
 
 PROC MIXED data = logmem2;
 	CLASS id gender demind;
-	MODEL logmemII = age demind age*demind timecp ses gender / solution;
+	MODEL logmemII = age_59 demind age_59*demind timecp ses gender / solution;
 	RANDOM intercept / subject = id;
 	REPEATED / type = SP(POW)(age) subject = id;
 RUN;

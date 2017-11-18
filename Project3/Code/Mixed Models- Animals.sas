@@ -25,8 +25,12 @@ RUN;
 
 PROC MIXED data = animals;
 	CLASS id gender demind;
-	MODEL animals = age demind age*demind timecp ses gender / solution;
+	MODEL animals = age_59 demind age_59*demind timecp ses gender / solution;
 	RANDOM intercept / subject = id;
+RUN;
+
+PROC FREQ data = animals;
+	TABLE demind;
 RUN;
 
 *-----------------------------------------------------;
@@ -35,7 +39,7 @@ RUN;
 
 PROC MIXED data = animals;
 	CLASS id gender demind;
-	MODEL animals = age demind age*demind timecp ses gender / solution;
+	MODEL animals = age_59 demind age_59*demind timecp ses gender / solution;
 	RANDOM intercept / subject = id;
 	REPEATED / type = AR(1) subject = id;
 RUN;
@@ -46,7 +50,7 @@ RUN;
 
 PROC MIXED data = animals;
 	CLASS id gender demind;
-	MODEL animals = age demind age*demind timecp ses gender / solution;
+	MODEL animals = age_59 demind age_59*demind timecp ses gender / solution;
 	RANDOM intercept / subject = id;
 	REPEATED / type = SP(POW)(age) subject = id;
 RUN;
