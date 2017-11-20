@@ -35,21 +35,31 @@
 	-Spaghetti plots (1-4): trajectory for all indivs over course of study, colored by dementia status 
 	-Spaghetti plots (5-8): trajectory for individuals with dementia leading up to diagnosis
 
-4. Project 3 Find Change Point.R
+4. Functions- Change Points and Bootstrap.R
+	-Contains functions to find change points and bootstraps for those changepoints
+	-Sourced in Project 3 Find Change Point.R and Project 3 Bootstrap Change Point.R
+
+5. Project 3 Find Change Point.R
 	-Input files: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
 	-Output files: BlockRModeling.csv, AnimalsModeling.csv, LogMem1Modeling.csv, LogMem2Modeling.csv
 	-Adapts Camille Moore's code to find change point for each outcome model
 
-5. Mixed Models- BlockR (SAS File)
+6. Project 3 Bootstrap Change Point.R
+	-Input files: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
+	-Output files: Bootstraps_blockr.sv, Bootstraps_animals.csv, Bootstraps_logmem1.csv, Bootstraps_logmem2.csv
+
+
+
+7. Mixed Models- BlockR (SAS File)
 	-Input file: BlockRModeling.csv
 	
-6. Mixed Models- Animals (SAS File)
+8. Mixed Models- Animals (SAS File)
 	-Input file: AnimalsModeling.csv
 
-7. Mixed Models- LogMem1 (SAS File)
+9. Mixed Models- LogMem1 (SAS File)
 	-Input file: LogMem1Modeling.csv
 
-8. Mixed Models- LogMem2 (SAS File)
+10. Mixed Models- LogMem2 (SAS File)
 	-Input file: LogMem2Modeling.csv
 
 

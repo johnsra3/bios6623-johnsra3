@@ -9,8 +9,9 @@
 #=============================================================#
 
 library(nlme)
+source("C:/Repositories/bios6623-johnsra3/Project3/Code/Functions- Change Points and Bootstrap.R")
 
-setwd("C:/Users/johnsra3/Documents/School/AdvancedData")
+setwd("C:/Users/johnsra3/Documents/School/Adv/ancedData")
 blockr <- read.csv("blockrOutcome.csv", header = T)
 animals <- read.csv("AnimalsOutcome.csv", header = T)
 logmem1 <- read.csv("LogMem1Outcome.csv", header = T)
@@ -18,40 +19,7 @@ logmem2 <- read.csv("LogMem2Outcome.csv", header = T)
 
 
 #=============================================================#
-# Change point function
-#=============================================================#
-
-#Create a function to search for change point and fit final change point model
-cp.search_and_fit<-function(patid, timeb4dem, age, ses, gender, y, cps){
-  
-  #Place to store likelihoods from the CP search
-  ll<-data.frame(changepoint = rep(NA, length(cps)), ll = rep(NA, length(cps)))
-  
-  #Search for the CP
-  for (i in 1:length(cps)){
-    cp <- cps[i]
-    timemax <- ifelse(timeb4dem > cp, timeb4dem - cp, 0)
-    cp.model <- lme(y ~ age + demind + age*demind + timemax + ses + gender, random = ~1|patid, method = 'ML')
-    ll[i, ] <- c(cp, logLik(cp.model))
-  }
-  
-  #Plot the likelihood
-  plot(ll$changepoint, ll$ll, type='l', xlab='Change Point (years)', ylab='Log Likelihood')
-  
-  #Find the max
-  cp<-ll[which(ll$ll==max(ll$ll)),'changepoint']
-  print(cp)
-  
-  #Fit the final model
-  timemax <- ifelse(timeb4dem > cp, timeb4dem - cp, 0)
-  cp.model <- lme(y~ age + demind + age*demind + timemax + ses + gender, random=~1|patid)
-  return(list(cp=cp, model=cp.model))
-
-}
-
-
-#=============================================================#
-# Change point for block
+# Change point for blockr
 #=============================================================#
 
 fivenum(blockr$timeb4dem)
@@ -154,7 +122,7 @@ logmem2_cp <- cp.model$cp
 
 
 #=============================================================#
-# Prepare each data set for modeling
+# Prepare each data set for modeling in SAS w/ cp included
 #=============================================================#
 
 #Each model will include: age_59, demind, age_59*demind,
