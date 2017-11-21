@@ -19,14 +19,14 @@
 1. Project 3 Data Cleaning.R
 	-Input file: Project3Data.csv
 	-Output files: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
-	-Both files saved in AdvancedData (personal folder, since no data on GitHub)
-	-Removes rows that are completely missing outcomes, then for each outcome removes individuals who don't have at least 3 time points 
+	-Files saved in AdvancedData (personal folder, since no data on GitHub)
+	-Removes individuals who don't have at least 3 time points for ANIMALS OUTCOME ONLY (as of 11/20/2017 email)
 
 2. Project 3 Demographics Table.R
 	-Input file: Project3Data.csv
 	-Output file: Table1Demographics.csv
-	-Uses first observation for all n = 216 individuals to create demographics table at baseline, stratified b/t those who do and don't 
-		develop dementia/MCI during course of the study	
+	-Uses first observation for all individuals w/ at least 3 animals outcomes to create demographics table at baseline, 
+		stratified b/t those who do and don't develop dementia/MCI during course of the study	
 
 3. Project 3 Spaghetti Plots.R
 	-Input files: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
@@ -48,18 +48,20 @@
 	-Input files: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
 	-Output files: Bootstraps_blockr.sv, Bootstraps_animals.csv, Bootstraps_logmem1.csv, Bootstraps_logmem2.csv
 
+7. Project 3 Summarize CP Bootstrap.R
+	-Input files: Bootstraps_blockr.sv, Bootstraps_animals.csv, Bootstraps_logmem1.csv, Bootstraps_logmem2.csv
+	-Output files: ...................
 
-
-7. Mixed Models- BlockR (SAS File)
+8. Mixed Models- BlockR (SAS File)
 	-Input file: BlockRModeling.csv
 	
-8. Mixed Models- Animals (SAS File)
+9. Mixed Models- Animals (SAS File)
 	-Input file: AnimalsModeling.csv
 
-9. Mixed Models- LogMem1 (SAS File)
+10. Mixed Models- LogMem1 (SAS File)
 	-Input file: LogMem1Modeling.csv
 
-10. Mixed Models- LogMem2 (SAS File)
+11. Mixed Models- LogMem2 (SAS File)
 	-Input file: LogMem2Modeling.csv
 
 
