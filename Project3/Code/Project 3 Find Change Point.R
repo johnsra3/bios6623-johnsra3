@@ -11,13 +11,34 @@
 library(nlme)
 source("C:/Repositories/bios6623-johnsra3/Project3/Code/Functions- Change Points and Bootstrap.R")
 
-setwd("C:/Users/johnsra3/Documents/School/Adv/ancedData")
+setwd("C:/Users/johnsra3/Documents/School/AdvancedData")
 blockr <- read.csv("blockrOutcome.csv", header = T)
 animals <- read.csv("AnimalsOutcome.csv", header = T)
 logmem1 <- read.csv("LogMem1Outcome.csv", header = T)
 logmem2 <- read.csv("LogMem2Outcome.csv", header = T)
 
 
+#=============================================================#
+# Re-run animals change point for only -6 to 2
+#=============================================================#
+
+fivenum(animals$timeb4dem)
+cps <- seq(from = -6, to = 2, by = 0.1)
+
+#Run the function on the dataset
+cp.model <- cp.search_and_fit(patid = animals$id, timeb4dem =animals$timeb4dem, age = animals$age_59, 
+                              demind = animals$demind, ses = animals$SES, gender = animals$gender, 
+                              y = animals$animals, cps = cps)
+summary(cp.model$model)
+(coeff <- cp.model$model$coefficients$fixed)
+
+animals_cp <- cp.model$cp
+#cp = -3.9
+
+
+#=============================================================#
+#=============================================================#
+#=============================================================#
 #=============================================================#
 # Change point for blockr
 #=============================================================#

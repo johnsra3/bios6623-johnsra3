@@ -20,6 +20,25 @@ logmem2 <- read.csv("LogMem2Outcome.csv", header = T)
 
 
 #=============================================================#
+# Bootstrap for animals- ONLY THIS OUTCOME!!!
+#=============================================================#
+
+vars <- c("id", "gender", "SES", "age", "animals", "demind", "timeb4dem")
+animals <- animals[, colnames(animals) %in% vars]
+colnames(animals)[which(colnames(animals) == "animals")] <- "y"
+
+niter <- 1000
+bootstraps_animal <- matrix(NA, ncol = 7, nrow = niter)
+cps <- seq(from = -6, to = 2, by = 0.1)
+for (j in 1:niter){
+  bootstraps_animal[j, ] <- boot.function(ids = animals$id, dat = animals, cps = cps)
+  print(j)
+}
+
+
+write.csv(bootstraps_animal, "Bootstraps_animals.csv")
+
+#=============================================================#
 # Bootstrap for blockR
 #=============================================================#
 
@@ -41,27 +60,6 @@ sd(bootstraps[,1])
 quantile(bootstraps[,1], c(0.025, 0.975))
 #whoa--these seem kind of weird and the bootstrapped mean is -4.22, wh/ is a little far off
 
-#something w/ slope?
-
-
-#=============================================================#
-# Bootstrap for animals
-#=============================================================#
-
-vars <- c("id", "gender", "SES", "age", "animals", "demind", "timeb4dem")
-animals <- animals[, colnames(animals) %in% vars]
-colnames(animals)[which(colnames(animals) == "animals")] <- "y"
-
-niter <- 1000
-bootstraps_animal <- matrix(NA, ncol = 7, nrow = niter)
-cps <- seq(from = -12.4, to = -0.1, by = 0.1)
-for (j in 1:niter){
-  bootstraps_animal[j, ] <- boot.function(ids = animals$id, dat = animals, cps = cps)
-  print(j)
-}
-
-
-write.csv(bootstraps_animal, "Bootstraps_animals.csv")
 
 
 #=============================================================#
