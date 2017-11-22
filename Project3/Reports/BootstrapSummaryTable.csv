@@ -1,0 +1,5 @@
+"","Outcome","Change Point (likelihood)","Change point (bootstrap)","Bootstrapped 95% CI"
+"1","Block R",-3.9,-3.78,"-4.9, -2.6"
+"2","Animals",-3.9,-4.01,"-5.5, -3"
+"3","LogMem1",-2.8,-2.65,"-4, -1.4"
+"4","LogMem2",-3,-3.29,"-4.4, -2"

@@ -55,5 +55,14 @@ bstab[2, 3] <- round(mean(animals_bs[, 1]), 2)
 bstab[3, 3] <- round(mean(logmem1_bs[, 1]), 2)  
 bstab[4, 3] <- round(mean(logmem2_bs[, 1]), 2)  
 
-bstab[1, 4] #stopped here, need to paste in separate parts
-  
+bstab[1, 4] <- paste(paste(round(quantile(blockr_bs[, 1], 0.025), 2), ",", sep = ""),
+                     round(quantile(blockr_bs[, 1], 0.975), 2))
+bstab[2, 4] <- paste(paste(round(quantile(animals_bs[, 1], 0.025), 2), ",", sep = ""),
+                     round(quantile(animals_bs[, 1], 0.975), 2))
+bstab[3, 4] <- paste(paste(round(quantile(logmem1_bs[, 1], 0.025), 2), ",", sep = ""),
+                     round(quantile(logmem1_bs[, 1], 0.975), 2))
+bstab[4, 4] <- paste(paste(round(quantile(logmem2_bs[, 1], 0.025), 2), ",", sep = ""),
+                     round(quantile(logmem2_bs[, 1], 0.975), 2))
+bstab
+
+write.csv(bstab, "C:/Repositories/bios6623-johnsra3/Project3/Reports/BootstrapSummaryTable.csv")

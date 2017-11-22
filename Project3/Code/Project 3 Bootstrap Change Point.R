@@ -9,6 +9,7 @@
 #=============================================================#
 
 library(multcomp)
+library(nlme)
 library(dplyr)
 source("C:/Repositories/bios6623-johnsra3/Project3/Code/Functions- Change Points and Bootstrap.R")
 
@@ -46,7 +47,7 @@ colnames(blockr)[which(colnames(blockr) == "blockR")] <- "y"
 
 niter <- 1000
 bootstraps <- matrix(NA, ncol = 7, nrow = niter)
-cps <- seq(from = -15.1, to = -0.1, by = 0.1)
+cps <- seq(from = -6, to = 2, by = 0.1)
 for (j in 1:niter){
   bootstraps[j, ] <- boot.function(ids = blockr$id, dat = blockr, cps = cps)
   print(j)
@@ -58,8 +59,6 @@ hist(bootstraps[,1], xlab="Change Point", main='Bootstrap Distribution of Change
 mean(bootstraps[,1])
 sd(bootstraps[,1])
 quantile(bootstraps[,1], c(0.025, 0.975))
-#whoa--these seem kind of weird and the bootstrapped mean is -4.22, wh/ is a little far off
-
 
 
 #=============================================================#
@@ -72,7 +71,7 @@ colnames(logmem1)[which(colnames(logmem1) == "logmemI")] <- "y"
 
 niter <- 1000
 bootstraps_logmem1 <- matrix(NA, ncol = 7, nrow = niter)
-cps <- seq(from = -15.1, to = -0.1, by = 0.1)
+cps <- seq(from = -6, to = 2, by = 0.1)
 for (j in 1:niter){
   bootstraps_logmem1[j, ] <- boot.function(ids = logmem1$id, dat = logmem1, cps = cps)
   print(j)
@@ -91,7 +90,7 @@ colnames(logmem2)[which(colnames(logmem2) == "logmemII")] <- "y"
 
 niter <- 1000
 bootstraps_logmem2 <- matrix(NA, ncol = 7, nrow = niter)
-cps <- seq(from = -15.1, to = -0.1, by = 0.1)
+cps <- seq(from = -6, to = 2, by = 0.1)
 for (j in 1:niter){
   bootstraps_logmem2[j, ] <- boot.function(ids = logmem2$id, dat = logmem2, cps = cps)
   print(j)
