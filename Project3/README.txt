@@ -50,7 +50,6 @@
 
 7. Project 3 Summarize CP Bootstrap.R
 	-Input files: Bootstraps_blockr.sv, Bootstraps_animals.csv, Bootstraps_logmem1.csv, Bootstraps_logmem2.csv
-	-Output files: ...................
 
 8. Mixed Models- BlockR (SAS File)
 	-Input file: BlockRModeling.csv
