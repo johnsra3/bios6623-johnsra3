@@ -9,27 +9,30 @@
 #=============================================================#
 
 library(multcomp)
-library(nlme)
 library(dplyr)
 source("C:/Repositories/bios6623-johnsra3/Project3/Code/Functions- Change Points and Bootstrap.R")
 
 setwd("C:/Users/johnsra3/Documents/School/AdvancedData")
-blockr <- read.csv("blockrOutcome.csv", header = T)
+#blockr <- read.csv("blockrOutcome.csv", header = T)
 animals <- read.csv("AnimalsOutcome.csv", header = T)
-logmem1 <- read.csv("LogMem1Outcome.csv", header = T)
-logmem2 <- read.csv("LogMem2Outcome.csv", header = T)
+#logmem1 <- read.csv("LogMem1Outcome.csv", header = T)
+#logmem2 <- read.csv("LogMem2Outcome.csv", header = T)
 
 
 #=============================================================#
 # Bootstrap for animals- ONLY THIS OUTCOME!!!
 #=============================================================#
 
-vars <- c("id", "gender", "SES", "age", "animals", "demind", "timeb4dem")
+vars <- c("id", "gender", "SES", "age_59", "animals", "demind", "timeb4dem", "int")
 animals <- animals[, colnames(animals) %in% vars]
 colnames(animals)[which(colnames(animals) == "animals")] <- "y"
 
-niter <- 1000
-bootstraps_animal <- matrix(NA, ncol = 7, nrow = niter)
+animals$gender <- factor(animals$gender)
+animals$demind <- factor(animals$demind)
+animals$int <- as.numeric(as.character(animals$demind)) * animals$age_59
+
+niter <- 10
+bootstraps_animal <- matrix(NA, ncol = 10, nrow = niter)
 cps <- seq(from = -6, to = 2, by = 0.1)
 for (j in 1:niter){
   bootstraps_animal[j, ] <- boot.function(ids = animals$id, dat = animals, cps = cps)
@@ -39,6 +42,13 @@ for (j in 1:niter){
 
 write.csv(bootstraps_animal, "Bootstraps_animals.csv")
 
+
+
+
+#=============================================================#
+#=============================================================#
+# DO NOT RUN THESE-- ADDITIONAL OUTCOMES NOT NEEDED
+#=============================================================#
 #=============================================================#
 # Bootstrap for blockR
 #=============================================================#

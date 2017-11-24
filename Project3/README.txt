@@ -39,10 +39,10 @@
 	-Contains functions to find change points and bootstraps for those changepoints
 	-Sourced in Project 3 Find Change Point.R and Project 3 Bootstrap Change Point.R
 
-5. Project 3 Find Change Point.R
+5. Project 3 Find Change Point and Run Model.R
 	-Input files: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
 	-Output files: BlockRModeling.csv, AnimalsModeling.csv, LogMem1Modeling.csv, LogMem2Modeling.csv
-	-Adapts Camille Moore's code to find change point for each outcome model
+	-Adapts Camille Moore's code to find change point for each outcome model, then run model
 
 6. Project 3 Bootstrap Change Point.R
 	-Input files: BlockROutcome.csv, AnimalsOutcome.csv, LogMem1Outcome.csv, LogMem2Outcome.csv
@@ -51,16 +51,6 @@
 7. Project 3 Summarize CP Bootstrap.R
 	-Input files: Bootstraps_blockr.sv, Bootstraps_animals.csv, Bootstraps_logmem1.csv, Bootstraps_logmem2.csv
 
-8. Mixed Models- BlockR (SAS File)
-	-Input file: BlockRModeling.csv
-	
-9. Mixed Models- Animals (SAS File)
-	-Input file: AnimalsModeling.csv
 
-10. Mixed Models- LogMem1 (SAS File)
-	-Input file: LogMem1Modeling.csv
-
-11. Mixed Models- LogMem2 (SAS File)
-	-Input file: LogMem2Modeling.csv
 
 
