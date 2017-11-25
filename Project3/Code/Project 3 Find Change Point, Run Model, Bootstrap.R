@@ -29,7 +29,7 @@ animals$demind <- factor(animals$demind)
 animals$int <- as.numeric(as.character(animals$demind)) * animals$age_59
 
 #Run the function on the dataset
-cp.model <- cp.search_and_fit(patid = animals$id, timeb4dem =animals$timeb4dem, age = animals$age_59, 
+cp.model <- cp.search_and_fit(id = animals$id, timeb4dem =animals$timeb4dem, age = animals$age_59, 
                               demind = animals$demind, ses = animals$SES, gender = animals$gender, 
                               y = animals$animals, cps = cps, int = animals$int)
 summary(cp.model$model)
@@ -55,7 +55,33 @@ animals[is.na(animals)] <- ""
 
 animals.model <- lme(animals ~ age_59 + demind + age_59*demind + timemax + SES + gender, random = ~1|id, 
                      correlation = corCAR1(form = ~age_59), method = "REML", data = animals)
-summary(animals.model)$coeff$fixed
+mmres <- as.data.frame(summary(animals.model)$coeff$fixed)
+
+setwd("C:/Repositories/bios6623-johnsra3/Project3/Reports")
+write.csv(mmres, "MixedModelResults.csv")
 
 
+#=============================================================#
+# Bootstrap change point
+#=============================================================#
 
+id <- animals$id
+timeb4dem <- animals$timeb4dem
+age_59 <- animals$age_59
+demind <- animals$demind
+ses <- animals$SES
+gender <- animals$gender
+y <- animals$animals
+cps <- seq(from = -6, to = 2, by = 0.1)
+int <- as.numeric(as.character(animals$demind)) * animals$age_59
+dat <- cbind.data.frame(id, timeb4dem, age_59, demind, ses, gender, y, int)
+
+niter <- 10
+bootstraps <- matrix(NA, ncol = 10, nrow = niter)
+for (j in 1:niter){
+  bootstraps[j, ] <- boot.function(ids = id, dat = dat, cps = cps)
+  print(j)
+}
+
+#setwd("C:/Repositories/bios6623-johnsra3/Project3/Reports")
+#write.csv(bootstraps, "BootstrapWithAllEstimates.csv")

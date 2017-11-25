@@ -7,11 +7,11 @@
 library(nlme)
 
 #=============================================================#
-# Change point function
+# Change point function-- note: specific to animals data set
 #=============================================================#
 
 #Create a function to search for change point and fit final change point model
-cp.search_and_fit<-function(patid, timeb4dem, age, demind, ses, gender, y, cps, int){
+cp.search_and_fit<-function(id, timeb4dem, age_59, demind, ses, gender, y, cps, int){
   
   #Place to store likelihoods from the CP search
   ll<-data.frame(changepoint = rep(NA, length(cps)), ll = rep(NA, length(cps)))
@@ -20,8 +20,9 @@ cp.search_and_fit<-function(patid, timeb4dem, age, demind, ses, gender, y, cps, 
   for (i in 1:length(cps)){
     cp <- cps[i]
     timemax <- ifelse(timeb4dem > cp, timeb4dem - cp, 0)
-    cp.model <- lme(y ~ age + demind + int + timemax + ses + gender, random = ~1|patid, 
-                    correlation = corCAR1(form = ~age), method = "REML")
+    cp.model <- lme(y ~ age_59 + demind + int + timemax + 
+                      ses + gender, random = ~1|id,
+                    correlation = corCAR1(form = ~age_59), method = "REML")
     ll[i, ] <- c(cp, logLik(cp.model))
   }
   
@@ -34,15 +35,11 @@ cp.search_and_fit<-function(patid, timeb4dem, age, demind, ses, gender, y, cps, 
   
   #Fit the final model
   timemax <- ifelse(timeb4dem > cp, timeb4dem - cp, 0)
-  cp.model <- lme(y ~ age + demind + int + timemax + ses + gender, random = ~1|patid, 
-                  correlation = corCAR1(form = ~age), method = "REML")
+  cp.model <- lme(y ~ age_59 + demind + int + timemax + ses + gender, random = ~1|id, 
+                  correlation = corCAR1(form = ~age_59), method = "REML")
   return(list(cp=cp, model=cp.model))
   
 }
-
-
-
-
 
 
 
@@ -65,9 +62,9 @@ boot.function <- function(ids, dat, cps){
   }
   
   #Repeat the analysis on the bootstrap sample
-  boot.model <- cp.search_and_fit(patid = boot.dat$id, timeb4dem = boot.dat$timeb4dem, age = boot.dat$age_59, 
-                                  demind = boot.dat$demind, ses = boot.dat$SES, gender = boot.dat$gender, 
-                                  y = boot.dat$y, int = boot.dat$int, cps)
+  boot.model <- cp.search_and_fit(id = boot.dat$id, timeb4dem = boot.dat$timeb4dem, age = boot.dat$age_59, 
+                                  demind = boot.dat$demind, ses = boot.dat$ses, gender = boot.dat$gender, 
+                                  y = boot.dat$y, int = boot.dat$int, cps = cps)
   
   #Save the estimates and CP's
   mod1 <- glht(boot.model$model, matrix(c(0, 0, 1, 1, 0, 0, 0), nrow = 1))
@@ -89,7 +86,6 @@ boot.function <- function(ids, dat, cps){
   
   return(boot.rslt)
 }
-
 
 
 
