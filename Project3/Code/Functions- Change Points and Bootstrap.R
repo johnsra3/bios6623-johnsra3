@@ -42,8 +42,6 @@ cp.search_and_fit<-function(id, timeb4dem, age_59, demind, ses, gender, y, cps, 
 }
 
 
-
-
 #=============================================================#
 # Bootstrap function for changepoint CIs
 #=============================================================#

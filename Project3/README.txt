@@ -12,6 +12,7 @@
 	(2) Wechsler Memory Scale Logical Memory II Story A; (3) category fluency for animals; and, (4) the Wechsler Adult Intelligence Scale-Revised Block Design]
 -Subj. must be followed for at least 3 time points to be included in an analysis for a certain outcome
 
+-Only required analysis is for animals outcome, but early code files also include blockr, logmemI, logmemII
 
 #Steps to recreate analysis (all code files in bios6623-johnsra3/Project2/Code):
 #Follow in this order:
@@ -41,11 +42,15 @@
 
 5. Project 3 Find Change Point, Run Model, Bootstrap.R
 	-Input files: AnimalsOutcome.csv
-	-Output files: BootstrapWithAllEstimates.csv, MixedModelResults.csv
+	-Output files: C:\Repositories\bios6623-johnsra3\Project3\Reports\BootstrapWithAllEstimates.csv, 
+			C:\Repositories\bios6623-johnsra3\Project3\Reports\MixedModelResults.csv
 	-Adapts Camille Moore's code to find change point for each outcome model, then run model and bootstrap CP
 
 7. Project 3 Summarize CP Bootstrap.R
 	-Input files: BootstrapWithAllEstimates.csv, MixedModelResults.csv
-	-Output files: 
+	-Output files: C:\Repositories\bios6623-johnsra3\Project3\Reports\BootstrapSummaryTable.csv,
+			C:\Repositories\bios6623-johnsra3\Project3\Reports\ResultsTabBootstrappedSEs.csv,
+			C:\Repositories\bios6623-johnsra3\Project3\Reports\BootstrapSlopeTables.csv
+	
 
 

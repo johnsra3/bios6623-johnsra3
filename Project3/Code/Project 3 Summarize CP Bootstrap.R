@@ -89,7 +89,7 @@ write.csv(setab, "ResultsTabBootstrappedSEs.csv")
 
 sltab <- as.data.frame(matrix(data = NA, nrow = 2, ncol = 3))
 
-sltab[1:2, 1] <- c("Slope before change-point", "Slope after change-point")
+sltab[1:2, 1] <- c("Slope after change-point", "Slope before change-point")
 
 sltab[1, 2] <- round(mean(animals_bs$Slope1), digits = 2)
 sltab[2, 2] <- round(mean(animals_bs$Slope2), digits = 2)
