@@ -44,7 +44,7 @@ animals_cp <- cp.model$cp
 #Each model will include: age_59, demind, age_59*demind,
   #SES, gender, max(age - ageonset + cp, 0)
 
-animals$timemax <- animals$timeb4dem - animals_cp 
+animals$timemax <- animals$timeb4dem - animals_cp
 animals$timecp <- ifelse(animals$timemax < 0, 0, animals$timemax)
 animals[is.na(animals)] <- ""
 
@@ -53,7 +53,7 @@ animals[is.na(animals)] <- ""
 # Run mixed model 
 #=============================================================#
 
-animals.model <- lme(animals ~ age_59 + demind + age_59*demind + timemax + SES + gender, random = ~1|id, 
+animals.model <- lme(animals ~ age_59 + demind + age_59*demind + timecp + SES + gender, random = ~1|id, 
                      correlation = corCAR1(form = ~age_59), method = "REML", data = animals)
 mmres <- as.data.frame(summary(animals.model)$coeff$fixed)
 

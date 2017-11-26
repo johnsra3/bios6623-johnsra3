@@ -1,0 +1,8 @@
+"","Variable","Model Estimate","Bootstrapped Standard Error","p-value"
+"1","Intercept",24.59,2.9,"<0.0001"
+"2","Change Point",-0.93,0.15,"<0.0001"
+"3","Gender",-0.56,0.57,"0.3311"
+"4","SES",0.04,0.02,"0.0811"
+"5","Age_59",-0.18,0.03,"<0.0001"
+"6","Interaction",0.01,0.09,"0.9493"
+"7","Dementia",-4.39,2.81,"0.1187"

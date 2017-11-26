@@ -41,11 +41,11 @@
 
 5. Project 3 Find Change Point, Run Model, Bootstrap.R
 	-Input files: AnimalsOutcome.csv
-	-Output files: BootstrapWithAllEstimates.csv
+	-Output files: BootstrapWithAllEstimates.csv, MixedModelResults.csv
 	-Adapts Camille Moore's code to find change point for each outcome model, then run model and bootstrap CP
 
 7. Project 3 Summarize CP Bootstrap.R
-	-Input files: BootstrapWithAllEstimates.csv
-
+	-Input files: BootstrapWithAllEstimates.csv, MixedModelResults.csv
+	-Output files: 
 
 
