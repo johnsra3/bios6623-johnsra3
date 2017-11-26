@@ -72,4 +72,7 @@ setab[7, 4] <- round(1 - pnorm(setab[7, 2]/setab[7, 3]), digits = 4)
 
 setab
 
-#NEED TO COMPARE THESE VALUES W/ MAXIE! OR ELEANOR!
+#NEED TO COMPARE THESE VALUES W/ MAXIE! OR ELEANOR! (haven't written csv yet)
+
+
+#write.csv(setab, "ResultsTabBootstrappedSEs.csv")
